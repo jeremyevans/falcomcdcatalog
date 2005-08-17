@@ -1,0 +1,275 @@
+body { 
+	background-color: #282828;
+	color: #ffe9ff;	
+	font-family: arial, helvetica, sans-serif, verdana;
+	font-size: 12px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+}
+
+a {
+	color: #faf0e6;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+}
+
+a:link {
+	color: #faf0e6;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+} 
+
+a:active {
+	color: #f5fffa;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+}
+
+a:hover {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: underline;	
+} 
+
+a:visited {
+	color: #fff0f5;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+}
+
+img {
+	border-style: none;
+	border-width: 0px;
+}
+
+table {
+	border-style: none;
+	border-width: 0px;
+}
+
+#nav {
+	background-color: #282828;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	border-right-width: 0px;
+	border-top-width: 0px;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-right-style: none;
+	border-top-style: none;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 0px;
+	position: absolute;
+	top: 0px;
+	left: 0px; 		
+	width: 200px;
+}
+
+#nav p {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#nav a {
+	display: block;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;	
+}
+
+#nav img {
+	display: block;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center; /* For IE 5.x */
+}
+
+#content {
+	margin-bottom: 0px;
+	margin-left: 205px;
+	margin-top: 0px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	width: auto;
+}
+
+#content img.logofalcom {
+	display: block;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center; /* For IE 5.x */
+}
+
+#footer {
+	clear: both;
+}
+
+#footer p {
+	color: #ffe9ff;
+	font-size: 10px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 100px;
+	text-align: center;
+	width: auto;
+}
+
+#content div.spacer {
+	font-size: 1px; 
+	line-height: 1px;
+	clear: both;
+}
+
+.sitetitle {
+	text-align: center;	
+}
+
+h1 {
+	font-family: arial, helvetica, sans-serif, verdana;	
+	font-size: 28px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+h2 {
+	font-family: arial, helvetica, sans-serif, verdana;	
+	font-size: 18px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+h3 {
+	font-family: arial, helvetica, sans-serif, verdana;	
+	font-size: 16px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+h4 {
+	font-family: arial, helvetica, sans-serif, verdana;	
+	font-size: 14px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+li {
+	color: #ffe9ff;
+	font-family: arial, helvetica, sans-serif, verdana;
+	font-size: 12px;
+}
+
+p {
+	color: #ffe9ff;
+	font-family: arial, helvetica, sans-serif, verdana;
+	font-size: 12px;
+	padding-left: 0px;
+	padding-right: 5px;
+}
+
+.listing {
+	display: block;
+}
+
+.linklisting a {
+	display: block;
+}
+
+.albumpic {
+	float: left;
+	padding-right: 10px;
+	padding-top: 10px;
+}
+
+.emphasis {
+	font-weight: bold;
+}
+
+.email {
+	background-color: #000000;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#englishlyrics {
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-top: 90px;
+	padding-bottom: 5px;
+	padding-left: 0px;
+	padding-right: 5px;
+	padding-top: 5px;
+	position: absolute;
+	top: 100px;
+	left: 210px;
+	width: 300px;	
+}
+
+#romajilyrics {
+	background-color: #000000;
+	margin-bottom: 0px;
+	margin-left: 70px;
+	margin-top: 90px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	position: absolute;
+	top: 100px;
+	left: 560px;
+	width: 300px;	
+}
+
+#japaneselyrics {
+	margin-bottom: 0px;
+	margin-top: 90px;
+	padding-bottom: 5px;
+	padding-left: 0px;
+	padding-right: 5px;
+	padding-top: 5px;
+	position: absolute;
+	top: 100px;
+	left: 210px;
+	width: 300px;	
+}
+
+.translatedLyric {
+	padding-bottom: 5px;
+	padding-left: 4em;
+	font-style: italic;
+}
+
+.originalLyric {
+	padding-bottom: 5px;
+}

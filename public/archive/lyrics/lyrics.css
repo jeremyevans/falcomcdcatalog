@@ -1,0 +1,16 @@
+.verseHolder {
+	position:relative;
+	margin-bottom:2em;
+	width:120ex;
+}
+
+.translatedLyric 
+{
+	position: absolute;
+	left:50ex;
+	font-style: italic;
+}
+
+.originalLyric {
+	position: absolute;
+}

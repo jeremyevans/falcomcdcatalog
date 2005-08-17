@@ -1,0 +1,16 @@
+<h1><%= @pagetitle = @lyric.japanese_title %></h1>
+
+<p>
+<%= "Music: #{link_to(@lyric.composer.jname, '/falcom/artist/%s' % @lyric.composer.id)}<br />" if @lyric.composer %>
+<%= "Arrangement: #{link_to(@lyric.arranger.jname, '/falcom/artist/%s' % @lyric.arranger.id)}<br />" if @lyric.arranger %>
+<%= "Lyric: #{link_to(@lyric.lyricist.jname, '/falcom/artist/%s' % @lyric.lyricist.id)}<br />" if @lyric.lyricist %>
+<%= "Vocal: #{link_to(@lyric.vocalist.jname, '/falcom/artist/%s' % @lyric.vocalist.id)}<br />" if @lyric.vocalist %>
+</p>
+
+<p><%= link_to('English and Romaji Lyrics', "/falcom/lyric/#{@lyric.id}") %></p>
+
+<table class="lyric"><tbody>
+<% @lyric.japanese_verses.each do |verse| %>
+	<tr><td><%= verse.verse %></td></tr>
+<% end %>
+</tbody><table>

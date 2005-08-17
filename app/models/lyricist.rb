@@ -1,0 +1,2 @@
+class Lyricist < Artist
+end

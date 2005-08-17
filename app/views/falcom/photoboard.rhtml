@@ -1,0 +1,5 @@
+<div id="photoboard">
+<% @albums.each do |album| %>
+	<%= link_to(image_tag("/falcom/images/#{album.picture}", :alt=>album.fullname, :title=>album.fullname), "/falcom/album/#{album.id}") %>
+<% end %>
+</div>

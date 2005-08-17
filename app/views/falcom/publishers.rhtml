@@ -1,0 +1,7 @@
+<h1><%= @pagetitle = 'Publishers' %></h1>
+
+<ul>
+<% @publishers.each do |publisher| -%>
+	<li><%= link_to(publisher.name, "/falcom/publisher/#{publisher.id}") %></li>
+<% end %>
+</ul>

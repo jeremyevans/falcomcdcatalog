@@ -1,0 +1,21 @@
+<h1><%= @pagetitle = @song.name %> <%= link_to("(Edit)", "/falcom/edit_song/#{@song.id}") if admin?  %></h1>
+
+<%= content_tag(:h4, "From %s" % link_to(@song.game.name, "/falcom/game/#{@song.gameid}")) if @song.gameid %>
+<%= content_tag(:h4, "Arrangement of %s" % link_to(@song.arrangement.name, "/falcom/song/#{@song.arrangementof}")) if @song.arrangementof %>
+<%= content_tag :h4, link_to('Lyrics', "/falcom/lyric/#{@song.lyricid}") if @song.lyricid %>
+
+<h3>Appears on the following albums:</h3>
+<ul>
+<% @tracks.each do |track| %>
+	<li><%= link_to(track.album_and_number, "/falcom/album/#{track.albumid}") %></li>
+<% end %>
+</ul>
+
+<% if @song.arrangements.length > 0 %>
+  <h3>Is the basis for the following arrangements:</h3>
+  <ul>
+  <% @song.arrangements.each do |song| %>
+      <li><%= link_to(song.name, "/falcom/song/#{song.id}") %></li>
+  <% end %>
+  </ul>
+<% end %>

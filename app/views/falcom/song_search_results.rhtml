@@ -1,0 +1,8 @@
+<h1><%= @pagetitle = "Song Search Results" %></h1>
+
+<h4><%= @songs.length %> Matches</h4>
+<ul>
+<% @songs.each do |song| %>
+	<li><%= link_to(song.name, "/falcom/song/#{song.id}") %></li>
+<% end %>
+</ul>

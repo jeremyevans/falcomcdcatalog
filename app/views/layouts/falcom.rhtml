@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=<%= @charset || 'ISO-8859-1' %>" />
+<title>Falcom CD Catalog - English Edition<%= ' - ' + title(@pagetitle) if @pagetitle %></title>
+<link rel="stylesheet" type="text/css" href="/falcom/falcomcatalog.css" />
+</head>
+
+<body>
+<div id="content">
+<%= @content_for_layout %>
+</div>
+
+<div id="nav">
+<a href="/falcom" id="banner">Falcom CD Catalog</a>
+<br />
+<a href="/falcom/news">Site News</a>
+<a href="/falcom/info">Site Information</a>
+<a href="/falcom/order">Falcom Ordering Information</a>
+<br />
+<a href="/falcom/albums_by_date">Albums By Date</a>
+<a href="/falcom/albums_by_media_type">Albums By Media Type</a>
+<a href="/falcom/albums_by_name">Albums By Name</a>
+<a href="/falcom/albums_by_price">Albums By Price</a>
+<br />
+<a href="/falcom/photoboard">Album Photoboard</a>
+<br />
+<a href="/falcom/games">Games</a>
+<a href="/falcom/publishers">Publishers</a>
+<a href="/falcom/series_list">Series</a>
+<% unless static? %>
+<br />
+<a href="/falcom/random_album">Random Album</a>
+<a href="/falcom/random_lyric">Random Lyric</a>
+<a href="/falcom/random_song">Random Song</a>
+<br />
+<a href="/falcom/song_search">Song Search</a>
+<% end %>
+
+<% if admin? %>
+<h4>Admin</h4>
+<a href="/falcom/new_album">Add Album</a>
+<a href="/falcom/new_albuminfo">Add Album Info</a>
+<a href="/falcom/new_medium">Add Album Release</a>
+<a href="/falcom/new_discname">Add Disc Name</a>
+<a href="/falcom/new_game">Add Game</a>
+<a href="/falcom/new_publisher">Add Publisher</a>
+<a href="/falcom/new_series">Add Series</a>
+<a href="/falcom/new_song">Add Song</a>
+<a href="/falcom/new_track">Add Track</a>
+<% end %>
+</div>
+</body></html>
