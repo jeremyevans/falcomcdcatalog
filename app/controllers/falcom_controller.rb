@@ -1,7 +1,7 @@
 class FalcomController < ApplicationController
   layout "falcom"
-  #after_filter { |c| c.cache_page }
-  before_filter { |c| false if c.params['action'] =~ /^(edit|update|new|create)/ and ! (c.request.env['REMOTE_ADDR'] =~ /^192.168.1/) }
+  #after_filter { |c| c.cache_page if c.params['action'] !~ /^(photoboard|song_search_results|random|edit|update|new_|create)/  }
+  before_filter { |c| false if c.params['action'] =~ /^(edit|update|new_|create)/ and ! (c.request.env['REMOTE_ADDR'] =~ /^192.168.1/) }
   scaffold_habtm(Game, Album)
   scaffold_habtm(Series, Album)
   scaffold(:album, :suffix=>true)

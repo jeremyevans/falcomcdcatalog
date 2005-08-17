@@ -23,7 +23,7 @@
 </td>
 
 <td id="albuminfo">
-<%= (File.exists?(RAILS_ROOT+'/public/images/large/'+@album.picture) ? link_to(image_tag("/falcom/images/#{@album.picture}"), "/falcom/images/large/#{@album.picture}") : image_tag("/falcom/images/#{@album.picture}")) if @album.picture %>
+<%= (File.exists?(RAILS_ROOT+'/public/falcom/images/large/'+@album.picture) ? link_to(image_tag("/falcom/images/#{@album.picture}"), "/falcom/images/large/#{@album.picture}") : image_tag("/falcom/images/#{@album.picture}")) if @album.picture %>
 
 <h4>Releases</h4>
 <ul>
