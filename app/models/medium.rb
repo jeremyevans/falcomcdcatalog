@@ -6,12 +6,12 @@ class Medium < ActiveRecord::Base
     
     def self.find_albums_by_date(year = nil)
         conditions = ['EXTRACT(YEAR FROM publicationdate) = ?', year] if year
-        find(:all, :include=>:album, :conditions=>conditions, :order=>'publicationdate, albums.sortname').collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
+        find(:all, :include=>:album, :conditions=>conditions, :order=>'publicationdate, media_album.sortname').collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
     end
     
     def self.find_albums_by_mediatype(mediatype = nil)
         conditions = ['mediatypeid = ?', mediatype] if mediatype
-        find(:all, :include=>[:album, :mediatype], :conditions=>conditions, :order=>'mediatypes.name, albums.sortname').collect{|item| [item.mediatype.name, item.album, item.mediatype.name]}.uniq
+        find(:all, :include=>[:album, :mediatype], :conditions=>conditions, :order=>'media_mediatype.name, media_album.sortname').collect{|item| [item.mediatype.name, item.album, item.mediatype.name]}.uniq
     end
 
     def self.find_albums_by_price(price = nil)
@@ -22,7 +22,7 @@ class Medium < ActiveRecord::Base
         else
             ['price = ?', price]
         end
-        find(:all, :include=>:album, :conditions=>conditions, :order=>'price, albums.sortname').collect{|item| [item.price, item.album, item.price]}.uniq
+        find(:all, :include=>:album, :conditions=>conditions, :order=>'price, media_album.sortname').collect{|item| [item.price, item.album, item.price]}.uniq
     end
 
     def price

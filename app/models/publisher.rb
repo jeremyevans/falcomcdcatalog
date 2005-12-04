@@ -4,6 +4,6 @@ class Publisher < ActiveRecord::Base
     @scaffold_fields = %w'name'
 
     def albums
-        Album.find(:all, :include=>:media, :conditions=>['media.publisherid = ?', id], :order=>'sortname')
+        Album.find(:all, :include=>:media, :conditions=>['publisherid = ?', id], :order=>'sortname')
     end
 end
