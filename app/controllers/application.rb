@@ -1,4 +1,7 @@
-# The filters added to this controller will be run for all controllers in the application.
-# Likewise will all the methods added be available for all controllers.
+# Filters added to this controller will be run for all controllers in the application.
+# Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
+  session :off
+  after_filter :compress_output
+  layout "falcom"
 end
