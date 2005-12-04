@@ -11,19 +11,19 @@ class FalcomController < ApplicationController
   scaffold(:track, :suffix=>true)
     
   def album
-    @album = Album.find(@params['id'])
+    @album = Album.find(params[:id])
     @discs = []
     @albuminfos = {}
     @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
-    Track.find(:all, :conditions => ['albumid = ?', @params['id']], :order=>'tracks.discnumber, tracks.number', :include=>[:song]).each do |track|
+    Track.find(:all, :conditions => ['albumid = ?', params[:id]], :order=>'tracks.discnumber, tracks.number', :include=>[:song]).each do |track|
       @discs[track.discnumber-1][:tracks].push track
     end
     @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
-    @media = Medium.find(:all, :conditions => ['albumid = ?', @params['id']], :order=>'media.publicationdate', :include=>[:mediatype, :publisher])
+    @media = Medium.find(:all, :conditions => ['albumid = ?', params[:id]], :order=>'media.publicationdate', :include=>[:mediatype, :publisher])
   end
 
   def albums_by_date
-    year = @params['id'].to_i if @params['id']
+    year = params[:id].to_i if params[:id]
     @include_category = true
     @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
     @albums = Medium.find_albums_by_date(year)
@@ -31,7 +31,7 @@ class FalcomController < ApplicationController
   end
 
   def albums_by_media_type
-    mediatype = @params['id'].to_i if @params['id']
+    mediatype = params[:id].to_i if params[:id]
     @albums = Medium.find_albums_by_mediatype(mediatype)
     @pagetitle = if !(mediatype and @albums.length > 0)
         'Albums By Media Type'
@@ -45,7 +45,7 @@ class FalcomController < ApplicationController
   end
   
   def albums_by_price
-    price = @params['id'].to_i if @params['id']
+    price = params[:id].to_i if params[:id]
     @pagetitle = case price
       when nil then 'Albums By Price'
       when 0 then 'Albums Not for Sale'
@@ -56,11 +56,11 @@ class FalcomController < ApplicationController
   end
 
   def artist
-    @artist = Artist.find(@params['id'])
+    @artist = Artist.find(params[:id])
   end
   
   def create_tracklist
-    album = Album.find(@params['id'])
+    album = Album.find(params[:id])
     if album.tracks.length == 0  
       songs = {}
       Song.find(:all).each {|s| songs[s.name.downcase.gsub(/\s/, "")] = s.id}
@@ -80,7 +80,7 @@ class FalcomController < ApplicationController
   end
 
   def game
-    @game = Game.find(@params['id'])
+    @game = Game.find(params[:id])
   end
   
   def games
@@ -93,16 +93,16 @@ class FalcomController < ApplicationController
   end
 
   def lyric
-    @lyric = Lyric.find(@params['id'])
+    @lyric = Lyric.find(params[:id])
   end
   
   def new_tracklist
-    @album = Album.find(@params['id'])
+    @album = Album.find(params[:id])
     redirect_to "/falcom/album/#{@album.id}" if @album.tracks.length > 0
   end
   
   def new_tracklist_table
-    @album = Album.find(@params['id'])
+    @album = Album.find(params[:id])
     @games = Game.find(:all, :order=>'name')
     @tracks = Track.find_by_sql(['SELECT tracks.id, tracks.discnumber, tracks.number, tracks.songid, songs.name, games.name AS game, arrangements.name AS arrangement FROM tracks LEFT JOIN songs ON songid = songs.id LEFT JOIN games ON gameid = games.id LEFT JOIN songs AS arrangements ON songs.arrangementof = arrangements.id WHERE tracks.albumid = ? ORDER BY tracks.discnumber, tracks.number', @album.id])
   end
@@ -112,7 +112,7 @@ class FalcomController < ApplicationController
   end
 
   def publisher
-    @publisher = Publisher.find(@params['id'])
+    @publisher = Publisher.find(params[:id])
   end
   
   def publishers
@@ -132,8 +132,8 @@ class FalcomController < ApplicationController
   end
  
   def series
-    @series = Series.find(@params['id'], :include=>:albums, :order=>'albums.fullname')
-    @games = Game.find(:all, :conditions=>['seriesid = ?', @params['id']], :include=>:albums, :order=>'games.name, albums.fullname')
+    @series = Series.find(params[:id], :include=>:albums, :order=>'fullname')
+    @games = Game.find(:all, :conditions=>['seriesid = ?', params[:id]], :include=>:albums, :order=>'games.name, albums.fullname')
   end
   
   def series_list
@@ -141,8 +141,8 @@ class FalcomController < ApplicationController
   end
   
   def song
-    @song = Song.find(@params['id'], :include=>:game)
-    @tracks = Track.find(:all, :conditions=>['songid = ?', @params['id']], :include => [:album], :order=>'albums.fullname, tracks.discnumber, tracks.number')
+    @song = Song.find(params[:id], :include=>:game)
+    @tracks = Track.find(:all, :conditions=>['songid = ?', params[:id]], :include => [:album], :order=>'albums.fullname, tracks.discnumber, tracks.number')
   end
   
   def song_search_results
@@ -151,8 +151,8 @@ class FalcomController < ApplicationController
   
   def update_tracklist_game
     songs = Track.find(:all, :conditions=>['albumid = ? AND discnumber = ? AND number BETWEEN ? and ?', params[:id], params[:disc], params[:starttrack], params[:endtrack]]).collect{|t| t.songid.to_s}.compact
-    Song.connection.update('UPDATE songs SET gameid = %i WHERE id IN (%s)' % [@params[:game].to_i, songs.join(',')])
-    redirect_to "/falcom/new_tracklist_table/#{@params[:id]}"
+    Song.connection.update('UPDATE songs SET gameid = %i WHERE id IN (%s)' % [params[:game].to_i, songs.join(',')])
+    redirect_to "/falcom/new_tracklist_table/#{params[:id]}"
   end
   
   private
