@@ -1,6 +1,0 @@
-<h1><%= @pagetitle = 'Albums By Name' %></h1>
-<ul>
-<% @albums.each do |album| %>
-	<li><%= link_to(album.fullname, "/falcom/album/#{album.id}") %></li>
-<% end %>
-</ul>

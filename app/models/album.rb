@@ -8,6 +8,12 @@ class Album < ActiveRecord::Base
   @scaffold_select_order = 'sortname'
   @scaffold_fields = %w'fullname sortname picture numdiscs'
  
+  def self.group_all_by_sortname(initial = nil)
+    initials = {}
+    conditions = ["fullname LIKE ?", "#{initial}%"] if initial
+    find(:all, :conditions=>conditions, :order=>'sortname').collect{|album| ['', album, album.sortname[0...1]]}.uniq
+  end
+ 
   def scaffold_name
     fullname
   end

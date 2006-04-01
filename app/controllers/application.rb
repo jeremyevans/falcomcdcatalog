@@ -3,5 +3,4 @@
 class ApplicationController < ActionController::Base
   session :off
   after_filter :compress_output
-  layout "falcom"
 end

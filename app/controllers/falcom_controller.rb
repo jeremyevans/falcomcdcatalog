@@ -41,7 +41,13 @@ class FalcomController < ApplicationController
   end
 
   def albums_by_name
-    @albums = Album.find(:all, :order=>'sortname')
+    initial = params[:id][0...1] if params[:id]
+    @albums = Album.group_all_by_sortname(initial)
+    @pagetitle = if !(initial and @albums.length > 0)
+        'Albums By Name'
+    else "Albums Starting with #{initial}"
+    end
+    albums_by_category
   end
   
   def albums_by_price
