@@ -1,2 +1,0 @@
-class Composer < Artist
-end

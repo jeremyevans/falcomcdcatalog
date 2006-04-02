@@ -1,2 +1,0 @@
-class Vocalist < Artist
-end

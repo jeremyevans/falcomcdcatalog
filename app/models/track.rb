@@ -3,6 +3,7 @@ class Track < ActiveRecord::Base
   belongs_to :album, :foreign_key => 'albumid'
   @scaffold_fields = %w'album discnumber number song'
   @scaffold_include = [:song, :album]
+  @scaffold_auto_complete_options = {}
 
   def album_and_number
     "#{album.fullname}, %sTrack #{number}" % (album.numdiscs > 1 ? "Disc #{discnumber}, " : '')

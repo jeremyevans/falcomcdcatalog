@@ -1,14 +1,6 @@
 class FalcomController < ApplicationController
   before_filter { |c| false if c.params[:action] =~ /^(new|edit|update|create|destroy|manage|merge|search)_/ and c.request.env['REMOTE_ADDR'] !~ /^192.168.1/ }
-  scaffold(:album, :suffix=>true, :habtm=>[:game, :series])
-  scaffold(:albuminfo, :suffix=>true)
-  scaffold(:discname, :suffix=>true)
-  scaffold(:game, :suffix=>true, :habtm=>:album)
-  scaffold(:medium, :suffix=>true)
-  scaffold(:publisher, :suffix=>true)
-  scaffold(:series, :suffix=>true, :habtm=>:album)
-  scaffold(:song, :suffix=>true)
-  scaffold(:track, :suffix=>true)
+  scaffold_all_models
     
   def album
     @album = Album.find(params[:id])

@@ -5,6 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<%= @charset || 'ISO-8859-1' %>" />
 <title>Falcom CD Catalog - English Edition<%= ' - ' + title(@pagetitle) if @pagetitle %></title>
 <link rel="stylesheet" type="text/css" href="/falcom/falcomcatalog.css" />
+<%= javascript_include_tag(:defaults) if admin? %>
 </head>
 
 <body>
@@ -45,6 +46,7 @@
 <a href="/falcom/manage_medium">Manage Album Release</a>
 <a href="/falcom/manage_discname">Manage Disc Name</a>
 <a href="/falcom/manage_game">Manage Game</a>
+<a href="/falcom/manage_lyric">Manage Lyric</a>
 <a href="/falcom/manage_publisher">Manage Publisher</a>
 <a href="/falcom/manage_series">Manage Series</a>
 <a href="/falcom/manage_song">Manage Song</a>
