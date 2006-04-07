@@ -6,7 +6,7 @@ class Medium < ActiveRecord::Base
     
     def self.find_albums_by_date(year = nil)
         conditions = ['EXTRACT(YEAR FROM publicationdate) = ?', year] if year
-        find(:all, :include=>:album, :conditions=>conditions, :order=>'publicationdate, albums.sortname').collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
+        find(:all, :include=>:album, :conditions=>conditions, :order=>'publicationdate DESC, albums.sortname').collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
     end
     
     def self.find_albums_by_mediatype(mediatype = nil)

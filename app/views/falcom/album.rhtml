@@ -4,21 +4,21 @@
 <td id="tracklist">
 <%= link_to("Add Tracklist", "/falcom/new_tracklist/#{@album.id}") if admin? and @discs[0][:tracks].length == 0 %>
 <% @discs.each_with_index do |disc, i| i+=1 %>
-	<% if disc[:name] %>
-      <h2><%= disc[:name] %> <%= link_to("(Edit)", "/falcom/edit_discname/#{disc[:id]}") if admin? %></h2>
+  <% if disc[:name] %>
+    <h2><%= disc[:name] %> <%= link_to("(Edit)", "/falcom/edit_discname/#{disc[:id]}") if admin? %></h2>
     <% end %>
-	<%= "<ol>" if ! @albuminfos[[i,1]] %>
-	<% disc[:tracks].each_with_index do |track, j| j+=1 %>
-		<% if @albuminfos[[i,j]] %>
-			<%= "</ol>" if j != 1 %>
-			<% @albuminfos[[i,j]].each_with_index do |albuminfo, k| %>
-				<%= content_tag('h%i' % (k+5-@albuminfos[[i,j]].length), "#{albuminfo.info} #{link_to('(Edit)', '/falcom/edit_albuminfo/%i' % albuminfo.id) if admin?}") %>
-			<% end %>
-			<ol start='<%= j %>'>
-		<% end %>
-		<li><%= song_link(track.song) %> <%= '(%s)' % link_to("Edit", "/falcom/edit_track/#{track.id}") if admin? %> <%= '(%s)' % link_to("Lyrics", "/falcom/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
-	<% end %>
-	</ol>
+  <%= "<ol>" if ! @albuminfos[[i,1]] %>
+  <% disc[:tracks].each_with_index do |track, j| j+=1 %>
+    <% if @albuminfos[[i,j]] %>
+      <%= "</ol>" if j != 1 %>
+      <% @albuminfos[[i,j]].each_with_index do |albuminfo, k| %>
+        <%= content_tag('h%i' % (k+5-@albuminfos[[i,j]].length), "#{albuminfo.info} #{link_to('(Edit)', '/falcom/edit_albuminfo/%i' % albuminfo.id) if admin?}") %>
+      <% end %>
+      <ol start='<%= j %>'>
+    <% end %>
+    <li><%= song_link(track.song) %> <%= '(%s)' % link_to("Edit", "/falcom/edit_track/#{track.id}") if admin? %> <%= '(%s)' % link_to("Lyrics", "/falcom/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
+  <% end %>
+  </ol>
 <% end %>
 </td>
 
@@ -28,14 +28,17 @@
 <h4>Releases</h4>
 <ul>
 <% @media.each do |media| %>
-	<li><%= link_to(media.mediatype.name, "/falcom/albums_by_media_type/#{media.mediatypeid}") %>: <%= media.catalognumber %> (<%= link_to(media.price, "/falcom/albums_by_price/#{media.priceid}") %>)<br />
-	[<%= link_to(media.publisher.name, "/falcom/publisher/#{media.publisherid}") %> <%= date_link(media.publicationdate) %>] <%= link_to("(Edit)", "/falcom/edit_medium/#{media.id}") if admin? %></li>
+  <li><%= link_to(media.mediatype.name, "/falcom/albums_by_media_type/#{media.mediatypeid}") %>: <%= media.catalognumber %> (<%= link_to(media.price, "/falcom/albums_by_price/#{media.priceid}") %>)<br />
+  [<%= link_to(media.publisher.name, "/falcom/publisher/#{media.publisherid}") %> <%= date_link(media.publicationdate) %>] <%= link_to("(Edit)", "/falcom/edit_medium/#{media.id}") if admin? %></li>
 <% end %>
 </ul>
 
 <% if admin? %>
 <h4>Admin</h4>
 <ul>
+<li><%= link_to("Edit Album", "/falcom/edit_album/#{@album.id}")  %></li>
+<li><%= link_to("Add Release", "/falcom/new_medium?medium[albumid]=#{@album.id}")  %></li>
+<li><%= link_to("Add Album Info", "/falcom/new_albuminfo?albuminfo[albumid]=#{@album.id}")  %></li>
 <li><%= link_to("View Tracklist Table", "/falcom/new_tracklist_table/#{@album.id}")  %></li>
 <li><%= link_to("Associate Games", "/falcom/edit_album_games/#{@album.id}")  %></li>
 <li><%= link_to("Associate Series", "/falcom/edit_album_series/#{@album.id}")  %></li>

@@ -19,7 +19,7 @@ class FalcomController < ApplicationController
     @include_category = true
     @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
     @albums = Medium.find_albums_by_date(year)
-    albums_by_category
+    albums_by_category(true, true)
   end
 
   def albums_by_media_type
@@ -154,10 +154,11 @@ class FalcomController < ApplicationController
   end
   
   private
-  def albums_by_category(sort_by_category = true)
+  def albums_by_category(sort_by_category = true, reverse = false)
     @groups = {}
     @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
     @groups = sort_by_category ? @groups.sort : @groups.sort {|a,b| a[1][0][0].to_i <=> b[1][0][0].to_i}
+    @groups.reverse! if reverse
     render 'falcom/albums_by_category'
   end
 
