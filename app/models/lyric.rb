@@ -23,10 +23,10 @@ class Lyric < ActiveRecord::Base
   end
   
   def japanese_title
-      "#{jsongname} （#{song.game.jname}%s）" % (joriginalsongname != song.name ? "「#{joriginalsongname}」" : '')
+      "#{jsongname} （#{song.game.jname rescue nil}%s）" % (joriginalsongname != song.name ? "「#{joriginalsongname}」" : '')
   end
   
   def title
-      "#{song.name} (#{song.game.name}%s)" % (song.arrangementof ? " - #{song.arrangement.name}" : '')
+      "#{song.name} (#{song.game.name rescue nil}%s)" % (song.arrangementof ? " - #{song.arrangement.name}" : '')
   end
 end
