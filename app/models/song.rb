@@ -5,7 +5,7 @@ class Song < ActiveRecord::Base
   belongs_to :arrangement, :class_name=>'Song', :foreign_key=>'arrangementof'
   has_many :arrangements, :class_name=>'Song', :foreign_key=>'arrangementof'
 
-  @scaffold_select_order = 'name'
+  @scaffold_select_order = 'songs.name'
   @scaffold_fields = %w'name game lyric arrangement'
   @scaffold_auto_complete_options = {}
   
