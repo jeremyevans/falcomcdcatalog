@@ -13,6 +13,7 @@ class Lyric < ActiveRecord::Base
   @scaffold_fields = %w'rsongname jsongname joriginalsongname arranger composer lyricist vocalist'
   @scaffold_select_order = 'songs.name'
   @scaffold_include = :song
+  @scaffold_browse_include = :song
   @scaffold_associations = %w'song arranger composer lyricist vocalist english_verses romaji_verses japanese_verses'
   def scaffold_name
     song.name
