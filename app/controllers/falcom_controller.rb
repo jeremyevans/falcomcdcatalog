@@ -159,7 +159,7 @@ class FalcomController < ApplicationController
     @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
     @groups = sort_by_category ? @groups.sort : @groups.sort {|a,b| a[1][0][0].to_i <=> b[1][0][0].to_i}
     @groups.reverse! if reverse
-    render 'falcom/albums_by_category'
+    render :action=>'albums_by_category'
   end
 
   def static?
