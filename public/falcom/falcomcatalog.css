@@ -85,3 +85,5 @@ td#tracklist h4 { margin-left: 15px;}
 	text-align: center; 
 	font-size: 24px;
 }
+
+ul.scaffold_associated_records_list li form { display: inline; }

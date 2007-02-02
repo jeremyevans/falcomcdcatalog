@@ -51,3 +51,4 @@ end
 # Include your application configuration below
 ActiveRecord::Base.scaffold_convert_text_to_string = true
 ActiveRecord::Base.scaffold_auto_complete_default_options.merge!({:sql_name=>'name', :text_field_options=>{:size=>80}, :search_operator=>'ILIKE', :results_limit=>15, :phrase_modifier=>:to_s})
+ActiveRecord::Base.scaffold_habtm_with_ajax_default = true
