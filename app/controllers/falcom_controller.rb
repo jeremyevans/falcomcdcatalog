@@ -1,5 +1,5 @@
 class FalcomController < ApplicationController
-  before_filter { |c| false if c.params[:action] =~ /^(new|edit|update|create|destroy|manage|merge|search)_/ and c.request.env['REMOTE_ADDR'] !~ /^192.168.1/ }
+  before_filter { |c| false if c.params[:action] =~ /^(new|edit|update|create|destroy|manage|merge|search|add|remove)_/ and c.request.env['REMOTE_ADDR'] !~ /^192.168.1/ }
   scaffold_all_models
     
   def album
