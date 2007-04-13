@@ -40,8 +40,6 @@
 <li><%= link_to("Add Release", "/falcom/new_medium?medium[albumid]=#{@album.id}")  %></li>
 <li><%= link_to("Add Album Info", "/falcom/new_albuminfo?albuminfo[albumid]=#{@album.id}")  %></li>
 <li><%= link_to("View Tracklist Table", "/falcom/new_tracklist_table/#{@album.id}")  %></li>
-<li><%= link_to("Associate Games", "/falcom/edit_album_games/#{@album.id}")  %></li>
-<li><%= link_to("Associate Series", "/falcom/edit_album_series/#{@album.id}")  %></li>
 </ul>
 <% end %>
 </td></tr></tbody></table>
