@@ -2,6 +2,6 @@
 
 <ul>
 <% @series.each do |series| -%>
-	<li><%= link_to(series.name, "/falcom/series/#{series.id}") %></li>
+	<li><%= link_to(series.name, "/series/#{series.id}") %></li>
 <% end %>
 </ul>

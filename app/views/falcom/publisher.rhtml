@@ -3,6 +3,6 @@
 <h2>Albums Published By</h2>
 <ul>
 <% @publisher.albums.each do |album| %>
-	<li><%= link_to(album.fullname, "/falcom/album/#{album.id}") %></li>
+	<li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
 <% end %>
 </ul>

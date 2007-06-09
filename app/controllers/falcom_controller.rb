@@ -74,7 +74,7 @@ class FalcomController < ApplicationController
         end
       end
     end
-    redirect_to "/falcom/album/#{album.id}" 
+    redirect_to "/album/#{album.id}" 
   end
 
   def game
@@ -96,7 +96,7 @@ class FalcomController < ApplicationController
   
   def new_tracklist
     @album = Album.find(params[:id])
-    redirect_to "/falcom/album/#{@album.id}" if @album.tracks.length > 0
+    redirect_to "/album/#{@album.id}" if @album.tracks.length > 0
   end
   
   def new_tracklist_table
@@ -150,7 +150,7 @@ class FalcomController < ApplicationController
   def update_tracklist_game
     songs = Track.find(:all, :conditions=>['albumid = ? AND discnumber = ? AND number BETWEEN ? and ?', params[:id], params[:disc], params[:starttrack], params[:endtrack]]).collect{|t| t.songid.to_s}.compact
     Song.connection.update('UPDATE songs SET gameid = %i WHERE id IN (%s)' % [params[:game].to_i, songs.join(',')])
-    redirect_to "/falcom/new_tracklist_table/#{params[:id]}"
+    redirect_to "/new_tracklist_table/#{params[:id]}"
   end
   
   private

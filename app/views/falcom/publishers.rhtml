@@ -2,6 +2,6 @@
 
 <ul>
 <% @publishers.each do |publisher| -%>
-	<li><%= link_to(publisher.name, "/falcom/publisher/#{publisher.id}") %></li>
+	<li><%= link_to(publisher.name, "/publisher/#{publisher.id}") %></li>
 <% end %>
 </ul>

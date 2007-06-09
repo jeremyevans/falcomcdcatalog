@@ -8,6 +8,10 @@ module FalcomHelper
   end
   
   def song_link(song)
-    static? ? song.name : link_to(song.name, "/falcom/song/#{song.id}")
+    static? ? song.name : link_to(song.name, "/song/#{song.id}")
+  end
+  
+  def mail_to_maintainer(text = nil)
+    mail_to('falcomcdcatalog@falcomcdcatalog.no-ip.org', text)
   end
 end
