@@ -1,5 +1,5 @@
 class Album < ActiveRecord::Base
-  has_many :tracks, :foreign_key=>'albumid', :order=>'discnumber, number' 
+  has_many :tracks, :foreign_key=>'albumid', :order=>'discnumber, number', :include=>[:song, :album]
   has_many :discnames, :foreign_key=>'albumid', :order=>'number'
   has_many :albuminfos, :foreign_key=>'albumid', :order=>'discnumber, starttrack, endtrack DESC'
   has_many :media, :foreign_key=>'albumid', :order=>'publicationdate'

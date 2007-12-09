@@ -1,6 +1,14 @@
 class FalcomController < ApplicationController
-  before_filter { |c| false if c.params[:action] =~ /^(new|edit|update|create|destroy|manage|merge|search|add|remove)_/ and c.request.env['REMOTE_ADDR'] !~ /^192.168.1/ }
+  before_filter :require_admin_for_scaffolding
+  helper_method :admin?
+  hide_action :admin?
+  
   scaffold_all_models
+  scaffolded_methods.delete('index')
+  
+  def admin?
+    request.env['REMOTE_ADDR'] =~ /^192.168.1/ 
+  end
     
   def album
     @album = Album.find(params[:id])
@@ -106,7 +114,7 @@ class FalcomController < ApplicationController
   end
   
   def photoboard
-    @albums = Album.find(:all, :conditions=>"picture IS NOT NULL AND picture != ''", :order=>(static? ? 'fullname' : 'RANDOM()'))
+    @albums = Album.find(:all, :conditions=>"picture IS NOT NULL AND picture != ''", :order=>'RANDOM()')
   end
 
   def publisher
@@ -154,17 +162,17 @@ class FalcomController < ApplicationController
   end
   
   private
-  def albums_by_category(sort_by_category = true, reverse = false)
-    @groups = {}
-    @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
-    @groups = sort_by_category ? @groups.sort : @groups.sort {|a,b| a[1][0][0].to_i <=> b[1][0][0].to_i}
-    @groups.reverse! if reverse
-    render :action=>'albums_by_category'
-  end
+    def albums_by_category(sort_by_category = true, reverse = false)
+      @groups = {}
+      @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
+      @groups = sort_by_category ? @groups.sort : @groups.sort {|a,b| a[1][0][0].to_i <=> b[1][0][0].to_i}
+      @groups.reverse! if reverse
+      render :action=>'albums_by_category'
+    end
 
-  def static?
-    request.env.include?('HTTP_STATIC')
-  end
-  helper_method :static?
-  
+    def require_admin_for_scaffolding
+      if scaffolded_method?(params[:action]) && !admin?
+        render(:text=>'Access Denied', :status=>'403')
+      end
+    end
 end
