@@ -7,7 +7,7 @@ class FalcomController < ApplicationController
   scaffolded_methods.delete('index')
   
   def admin?
-    request.env['REMOTE_ADDR'] =~ /^192.168.1/ 
+    ADMIN
   end
     
   def album
