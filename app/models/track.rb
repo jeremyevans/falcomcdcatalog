@@ -1,7 +1,7 @@
 class Track < ActiveRecord::Base
   belongs_to :song, :foreign_key => 'songid'
   belongs_to :album, :foreign_key => 'albumid'
-  @scaffold_fields = %w'album discnumber number song'
+  @scaffold_fields = [:album, :discnumber, :number, :song]
   @scaffold_include = [:song, :album]
   @scaffold_auto_complete_options = {}
 

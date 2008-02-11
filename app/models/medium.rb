@@ -2,7 +2,7 @@ class Medium < ActiveRecord::Base
     belongs_to :album, :foreign_key => 'albumid'
     belongs_to :mediatype, :foreign_key => 'mediatypeid'
     belongs_to :publisher, :foreign_key => 'publisherid'
-    @scaffold_fields = %w'album mediatype publisher catalognumber price publicationdate'
+    @scaffold_fields = [:album, :mediatype, :publisher, :catalognumber, :price, :publicationdate]
     
     def self.find_albums_by_date(year = nil)
         conditions = ['EXTRACT(YEAR FROM publicationdate) = ?', year] if year

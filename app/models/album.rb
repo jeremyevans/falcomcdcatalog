@@ -6,7 +6,7 @@ class Album < ActiveRecord::Base
   has_and_belongs_to_many :games, :foreign_key=>'albumid', :join_table=>'gamealbums', :association_foreign_key=>'gameid'
   has_and_belongs_to_many :series, :foreign_key=>'albumid', :join_table=>'seriesalbums', :association_foreign_key=>'seriesid'
   @scaffold_select_order = 'sortname'
-  @scaffold_fields = %w'fullname sortname picture numdiscs'
+  @scaffold_fields = [:fullname, :sortname, :picture, :numdiscs]
  
   def self.group_all_by_sortname(initial = nil)
     initials = {}
