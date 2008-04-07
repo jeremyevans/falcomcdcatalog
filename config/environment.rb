@@ -7,6 +7,7 @@ Rails::Initializer.run do |config|
 end
 
 ActionController::Base.param_parsers.delete(Mime::XML)
+require 'scaffolding_extensions'
 ActiveRecord::Base::SCAFFOLD_OPTIONS[:text_to_string] = true
 ActiveRecord::Base::SCAFFOLD_OPTIONS[:auto_complete].merge!({:sql_name=>'name', :text_field_options=>{:size=>80}, :search_operator=>'ILIKE', :results_limit=>15, :phrase_modifier=>:to_s})
 ActiveRecord::Base::SCAFFOLD_OPTIONS[:habtm_ajax] = true
