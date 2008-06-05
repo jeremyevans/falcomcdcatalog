@@ -15,3 +15,5 @@ config.action_controller.perform_caching             = false
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
+
+DB = Sequel.sqlite('db/db.sqlite3')

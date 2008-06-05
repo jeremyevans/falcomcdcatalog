@@ -1,5 +1,5 @@
-class Albuminfo < ActiveRecord::Base
-  belongs_to :album, :foreign_key => 'albumid'
+class Albuminfo < Sequel::Model
+  many_to_one :album, :key => :albumid
   @scaffold_fields = [:album, :discnumber, :starttrack, :endtrack, :info]
   
   def scaffold_name

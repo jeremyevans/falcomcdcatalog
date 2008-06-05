@@ -1,12 +1,12 @@
-class Track < ActiveRecord::Base
-  belongs_to :song, :foreign_key => 'songid'
-  belongs_to :album, :foreign_key => 'albumid'
+class Track < Sequel::Model
+  many_to_one :song, :key => :songid
+  many_to_one :album, :key => :albumid
   @scaffold_fields = [:album, :discnumber, :number, :song]
   @scaffold_include = [:song, :album]
   @scaffold_auto_complete_options = {}
 
   def album_and_number
-    "#{album.fullname}, %sTrack #{number}" % (album.numdiscs > 1 ? "Disc #{discnumber}, " : '')
+    "#{album.fullname}, #{"Disc #{discnumber}, " if album.numdiscs > 1}Track #{number}"
   end
   
   def scaffold_name

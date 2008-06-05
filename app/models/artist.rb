@@ -1,5 +1,5 @@
-class Artist < ActiveRecord::Base
-    def songs
-        Song.find(:all, :joins=>'JOIN lyricsongs l ON l.id=lyricid', :conditions=>['l.composer_id = ? OR l.arranger_id = ? OR l.vocalist_id = ? OR l.lyricist_id = ?', id, id, id, id], :order=>'songs.name')
-    end
+class Artist < Sequel::Model
+  def songs
+    Song.join(Lyric, :id=>:lyricid).filter(id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]).order(:songs__name)
+  end
 end

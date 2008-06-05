@@ -1,7 +1,7 @@
-class Game < ActiveRecord::Base
-  belongs_to :series, :foreign_key=>'seriesid'
-  has_many :songs, :foreign_key=>'gameid', :order=>'name'
-  has_and_belongs_to_many :albums, :foreign_key=>'gameid', :join_table=>'gamealbums', :association_foreign_key=>'albumid', :order=>'sortname'
-  @scaffold_select_order = 'name'
+class Game < Sequel::Model
+  many_to_one :series, :key=>:seriesid
+  one_to_many :songs, :key=>:gameid, :order=>:name
+  many_to_many :albums, :left_key=>:gameid, :join_table=>:gamealbums, :right_key=>:albumid, :order=>:sortname
+  @scaffold_select_order = :name
   @scaffold_fields = [:series, :name, :jname]
 end

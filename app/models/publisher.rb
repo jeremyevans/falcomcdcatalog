@@ -1,9 +1,9 @@
-class Publisher < ActiveRecord::Base
-    has_many :media, :foreign_key=>'publisherid', :order=>'publicationdate'
-    @scaffold_select_order = 'name'
-    @scaffold_fields = [:name]
+class Publisher < Sequel::Model
+  one_to_many :media, :key=>:publisherid, :order=>:publicationdate
+  @scaffold_select_order = :name
+  @scaffold_fields = [:name]
 
-    def albums
-        Album.find(:all, :include=>:media, :conditions=>['media.publisherid = ?', id], :order=>'sortname')
-    end
+  def albums
+    Album.eager_graph(:media).filter(:media__publisherid => id).order(:sortname).all
+  end
 end

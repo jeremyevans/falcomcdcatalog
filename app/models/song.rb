@@ -1,11 +1,11 @@
-class Song < ActiveRecord::Base
-  has_many :tracks, :foreign_key => 'songid'
-  belongs_to :game, :foreign_key=>'gameid'
-  belongs_to :lyric, :foreign_key=>'lyricid'
-  belongs_to :arrangement, :class_name=>'Song', :foreign_key=>'arrangementof'
-  has_many :arrangements, :class_name=>'Song', :foreign_key=>'arrangementof'
+class Song < Sequel::Model
+  one_to_many :tracks, :key => :songid
+  one_to_many :arrangements, :class_name=>'Song', :key=>:arrangementof
+  many_to_one :game, :key=>:gameid
+  many_to_one :lyric, :key=>:lyricid
+  many_to_one :arrangement, :class_name=>'Song', :key=>:arrangementof
 
-  @scaffold_select_order = 'songs.name'
+  @scaffold_select_order = :name
   @scaffold_fields = [:name, :game, :lyric, :arrangement]
   @scaffold_auto_complete_options = {}
   

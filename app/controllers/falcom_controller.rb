@@ -11,15 +11,16 @@ class FalcomController < ApplicationController
   end
     
   def album
-    @album = Album.find(params[:id])
+    i = params[:id].to_i
+    @album = Album[i]
     @discs = []
     @albuminfos = {}
     @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
-    Track.find(:all, :conditions => ['albumid = ?', params[:id]], :order=>'tracks.discnumber, tracks.number', :include=>[:song]).each do |track|
+    Track.filter(:albumid=>i).eager(:song).order(:tracks__discnumber, :tracks__number).each do |track|
       @discs[track.discnumber-1][:tracks].push track
     end
     @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
-    @media = Medium.find(:all, :conditions => ['albumid = ?', params[:id]], :order=>'media.publicationdate', :include=>[:mediatype, :publisher])
+    @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher)
   end
 
   def albums_by_date
@@ -62,22 +63,22 @@ class FalcomController < ApplicationController
   end
 
   def artist
-    @artist = Artist.find(params[:id])
+    @artist = Artist[params[:id].to_i]
   end
   
   def create_tracklist
-    album = Album.find(params[:id])
+    album = Album[params[:id].to_i]
     if album.tracks.length == 0  
       songs = {}
-      Song.find(:all).each {|s| songs[s.name.downcase.gsub(/\s/, "")] = s.id}
+      Song.each{|s| songs[s.name.downcase.gsub(/\s/, "")] = s.id}
       disctracklists = params[:tracklist].strip.gsub("\r", "").split(/\n\n+/)
-      Album.transaction do
+      DB.transaction do
         disctracklists.each_with_index do |tracklist, i| i+=1
-          Discname.create({:albumid=>album.id, :number=>i, :name=>"Disc #{i}"}) if disctracklists.length > 1
+          Discname.create(:albumid=>album.id, :number=>i, :name=>"Disc #{i}") if disctracklists.length > 1
           tracklist.split("\n").each_with_index do |track, j| j+=1
             track = track.strip.gsub('&', "&amp;").gsub('"', "&quot;")
-            songid = track == '-' ? 1 : (songs[track.downcase.gsub(/\s/, "")] || (songs[track.downcase.gsub(/\s/, "")] = Song.create({:name=>track}).id)) 
-            Track.create({:albumid=>album.id, :discnumber=>i, :number=>j, :songid=>songid})
+            songid = track == '-' ? 1 : (songs[track.downcase.gsub(/\s/, "")] || (songs[track.downcase.gsub(/\s/, "")] = Song.create(:name=>track).id)) 
+            Track.create(:albumid=>album.id, :discnumber=>i, :number=>j, :songid=>songid)
           end
         end
       end
@@ -86,11 +87,11 @@ class FalcomController < ApplicationController
   end
 
   def game
-    @game = Game.find(params[:id])
+    @game = Game[params[:id].to_i]
   end
   
   def games
-    @games = Game.find(:all, :order=>'name')
+    @games = Game.order(:name)
   end
 
   def japanese_lyric
@@ -99,30 +100,30 @@ class FalcomController < ApplicationController
   end
 
   def lyric
-    @lyric = Lyric.find(params[:id])
+    @lyric = Lyric[params[:id].to_i]
   end
   
   def new_tracklist
-    @album = Album.find(params[:id])
+    @album = Album[params[:id].to_i]
     redirect_to "/album/#{@album.id}" if @album.tracks.length > 0
   end
   
   def new_tracklist_table
-    @album = Album.find(params[:id])
-    @games = Game.find(:all, :order=>'name')
-    @tracks = Track.find_by_sql(['SELECT tracks.id, tracks.discnumber, tracks.number, tracks.songid, songs.name, games.name AS game, arrangements.name AS arrangement FROM tracks LEFT JOIN songs ON songid = songs.id LEFT JOIN games ON gameid = games.id LEFT JOIN songs AS arrangements ON songs.arrangementof = arrangements.id WHERE tracks.albumid = ? ORDER BY tracks.discnumber, tracks.number', @album.id])
+    @album = Album[params[:id].to_i]
+    @games = Game.order(:name)
+    @tracks = Track.select(:tracks__id, :tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).left_outer_join(:songs, :id=>:songid).left_outer_join(:games, :id=>:gameid).left_outer_join(:songs, {:id=>:songs__arrangementof}, :arragements).filter(:tracks__albumid => @album.id).order(:tracks__discnumber, :tracks__number)
   end
   
   def photoboard
-    @albums = Album.find(:all, :conditions=>"picture IS NOT NULL AND picture != ''", :order=>'RANDOM()')
+    @albums = Album.filter([[:picture, nil], [:picture, '']].sql_negate).order(:RANDOM[])
   end
 
   def publisher
-    @publisher = Publisher.find(params[:id])
+    @publisher = Publisher[params[:id].to_i]
   end
   
   def publishers
-    @publishers = Publisher.find(:all, :order=>'name')
+    @publishers = Publisher.order(:name)
   end
   
   def random_album
@@ -138,26 +139,28 @@ class FalcomController < ApplicationController
   end
  
   def series
-    @series = Series.find(params[:id], :include=>:albums, :order=>'albums.fullname')
-    @games = Game.find(:all, :conditions=>['games.seriesid = ?', params[:id]], :include=>:albums, :order=>'games.name, albums.fullname')
+    i = params[:id].to_i
+    @series = Series.eager_graph(:albums).order(:albums__fullname).filter(:series__id=>i).all.first
+    @games = Game.eager_graph(:albums).order(:games__name, :albums__fullname).filter(:games__seriesid=>i).all
   end
   
   def series_list
-    @series = Series.find(:all, :order=>'name')
+    @series = Series.order(:name)
   end
   
   def song
-    @song = Song.find(params[:id])
-    @tracks = Track.find(:all, :conditions=>['tracks.songid = ?', params[:id]], :include => [:album], :order=>'albums.fullname, tracks.discnumber, tracks.number')
+    i = params[:id].to_i
+    @song = Song[i]
+    @tracks = Track.eager_graph(:album).order(:album__fullname, :tracks__discnumber, :tracks__number).filter(:tracks__songid=>i).all
   end
   
   def song_search_results
-    @songs = Song.find(:all, :conditions=>['name ILIKE ?', '%%%s%%' % params[:songname]], :order=>'name')
+    @songs = Song.filter(:name.ilike("%#{params[:songname]}%")).order(:name).all
   end
   
   def update_tracklist_game
-    songs = Track.find(:all, :conditions=>['albumid = ? AND discnumber = ? AND number BETWEEN ? and ?', params[:id], params[:disc], params[:starttrack], params[:endtrack]]).collect{|t| t.songid.to_s}.compact
-    Song.connection.update('UPDATE songs SET gameid = %i WHERE id IN (%s)' % [params[:game].to_i, songs.join(',')])
+    tracks = Track.filter(:albumid=>params[:id].to_i, :discnumber=>params[:disc].to_i, :number=>((params[:starttrack].to_i)..(params[:endtrack].to_i)))
+    Song.filter(:id=>tracks.map(:songid)).update(:gameid=>params[:game].to_i)
     redirect_to "/new_tracklist_table/#{params[:id]}"
   end
   
@@ -165,7 +168,7 @@ class FalcomController < ApplicationController
     def albums_by_category(sort_by_category = true, reverse = false)
       @groups = {}
       @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
-      @groups = sort_by_category ? @groups.sort : @groups.sort {|a,b| a[1][0][0].to_i <=> b[1][0][0].to_i}
+      @groups = sort_by_category ? @groups.sort : @groups.sort_by{|a| a[1][0][0].to_i}
       @groups.reverse! if reverse
       render :action=>'albums_by_category'
     end

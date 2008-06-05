@@ -8,7 +8,7 @@
   <h2>Albums</h2>
   <ul>
   <% @game.albums.each do |album| -%>
-      <li><%= link_to(album.fullname, "/album/#{album.albumid}") %></li>
+      <li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
   <% end %>
   </ul>
 <% end %>
