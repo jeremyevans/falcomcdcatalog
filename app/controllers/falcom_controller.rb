@@ -138,8 +138,8 @@ class FalcomController < ApplicationController
   end
  
   def series
-    @series = Series.find(params[:id], :include=>:albums, :order=>'fullname')
-    @games = Game.find(:all, :conditions=>['seriesid = ?', params[:id]], :include=>:albums, :order=>'games.name, fullname')
+    @series = Series.find(params[:id], :include=>:albums, :order=>'albums.fullname')
+    @games = Game.find(:all, :conditions=>['games.seriesid = ?', params[:id]], :include=>:albums, :order=>'games.name, albums.fullname')
   end
   
   def series_list
@@ -147,8 +147,8 @@ class FalcomController < ApplicationController
   end
   
   def song
-    @song = Song.find(params[:id], :include=>:game)
-    @tracks = Track.find(:all, :conditions=>['songid = ?', params[:id]], :include => [:album], :order=>'fullname, tracks.discnumber, tracks.number')
+    @song = Song.find(params[:id])
+    @tracks = Track.find(:all, :conditions=>['tracks.songid = ?', params[:id]], :include => [:album], :order=>'albums.fullname, tracks.discnumber, tracks.number')
   end
   
   def song_search_results

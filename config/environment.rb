@@ -1,4 +1,4 @@
-GEM_RAILS_VERSION = '2.0.2'
+GEM_RAILS_VERSION = '2.1.0'
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
