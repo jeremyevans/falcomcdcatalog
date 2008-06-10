@@ -5,7 +5,7 @@ class Medium < Sequel::Model
     @scaffold_fields = [:album, :mediatype, :publisher, :catalognumber, :price, :publicationdate]
     
     def self.find_albums_by_date(year = nil)
-        ds = year ? filter(:EXTRACT['YEAR FROM publicationdate'.lit] => year) : self
+        ds = year ? filter(:publicationdate.extract(:year).cast_as(:integer) => year) : self
         ds.eager_graph(:album).order(:publicationdate.desc, :album__sortname).all.collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
     end
     
