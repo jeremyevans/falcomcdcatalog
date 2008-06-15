@@ -17,9 +17,9 @@ class Lyric < Sequel::Model(:lyricsongs)
   
   @scaffold_fields = [:rsongname, :jsongname, :joriginalsongname, :arranger, :composer, :lyricist, :vocalist]
   @scaffold_select_order = :name
-  @scaffold_include = :song
-  @scaffold_browse_include = :song
-  @scaffold_associations = [:song, :arranger, :composer, :lyricist, :vocalist, :english_verses, :romaji_verses, :japanese_verses]
+  @scaffold_include = :songs
+  @scaffold_browse_include = :songs
+  @scaffold_associations = [:songs, :arranger, :composer, :lyricist, :vocalist, :english_verses, :romaji_verses, :japanese_verses]
   
   def scaffold_name
     song.name
