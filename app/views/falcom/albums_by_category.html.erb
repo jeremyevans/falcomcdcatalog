@@ -3,7 +3,7 @@
   <%= "<h2>#{separator}</h2>" if @groups.length > 1 %>
   <ul>
   <% albums.each do |category, album| %>
-      <li><%= "#{category} - " if @include_category %><%= link_to(album.fullname, "/album/#{album.id}") %></li>
+      <li><%= "#{category} - " if category %><%= link_to(album.fullname, "/album/#{album.id}") %></li>
   <% end %>
   </ul>
 <% end %>

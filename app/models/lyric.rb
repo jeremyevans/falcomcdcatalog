@@ -26,14 +26,14 @@ class Lyric < Sequel::Model(:lyricsongs)
   end
      
   def has_japanese_verses?
-    japanese_verses.length > 1
+    !japanese_verses.empty?
   end
   
   def japanese_title
-      "#{jsongname} （#{song.game.jname rescue nil}#{"「#{joriginalsongname}」" if joriginalsongname != song.name}）"
+    "#{jsongname} \357\274\210#{song.game.jname rescue nil}#{"\343\200\214#{joriginalsongname}\343\200\215" if joriginalsongname != song.name}\357\274\211"
   end
   
   def title
-      "#{song.name} (#{song.game.name rescue nil}#{" - #{song.arrangement.name}" if song.arrangementof})"
+    "#{song.name} (#{song.game.name rescue nil}#{" - #{song.arrangement.name}" if song.arrangementof})"
   end
 end

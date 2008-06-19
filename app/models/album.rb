@@ -7,17 +7,14 @@ class Album < Sequel::Model
   many_to_many :series, :left_key=>:albumid, :join_table=>:seriesalbums, :right_key=>:seriesid
   @scaffold_select_order = :sortname
   @scaffold_fields = [:fullname, :sortname, :picture, :numdiscs]
+  alias_method :scaffold_name, :fullname
  
   def self.group_all_by_sortname(initial = nil)
-    ds = initial ? filter(:fullname.like("#{initial}%")) : self
-    ds.order(:sortname).collect{|album| ['', album, album.sortname[0...1]]}.uniq
+    ds = initial ? filter(:sortname.like("#{initial}%")) : self
+    ds.order(:sortname).collect{|album| [nil, album, album.sortname[0...1]]}
   end
  
-  def scaffold_name
-    fullname
-  end
-  
   def <=>(other)
-    fullname <=> other.fullname
+    sortname <=> other.sortname
   end
 end

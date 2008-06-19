@@ -25,10 +25,9 @@ class FalcomController < ApplicationController
 
   def albums_by_date
     year = params[:id].to_i if params[:id]
-    @include_category = true
     @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
     @albums = Medium.find_albums_by_date(year)
-    albums_by_category(true, true)
+    albums_by_category
   end
 
   def albums_by_media_type
@@ -36,7 +35,7 @@ class FalcomController < ApplicationController
     @albums = Medium.find_albums_by_mediatype(mediatype)
     @pagetitle = if !(mediatype and @albums.length > 0)
         'Albums By Media Type'
-    else "Albums in #{@albums[0][0]} format"
+    else "Albums in #{@albums[0][2]} format"
     end
     albums_by_category
   end
@@ -59,7 +58,7 @@ class FalcomController < ApplicationController
       else "Albums Costing #{price} Yen"
     end
     @albums = Medium.find_albums_by_price(price)
-    albums_by_category(false)
+    albums_by_category
   end
 
   def artist
@@ -165,17 +164,21 @@ class FalcomController < ApplicationController
   end
   
   private
-    def albums_by_category(sort_by_category = true, reverse = false)
-      @groups = {}
-      @albums.each {|category, album, separator| (@groups[separator] ||= []) << [category, album] }
-      @groups = sort_by_category ? @groups.sort : @groups.sort_by{|a| a[1][0][0].to_i}
-      @groups.reverse! if reverse
-      render :action=>'albums_by_category'
-    end
 
-    def require_admin_for_scaffolding
-      if scaffolded_method?(params[:action]) && !admin?
-        render(:text=>'Access Denied', :status=>'403')
+  def albums_by_category
+    @groups = []
+    last_sep = nil
+    @albums.each do |category, album, separator| 
+      unless last_sep == separator
+        @groups << [separator, []]
+        last_sep = separator
       end
+      @groups[-1][1] << [category, album]
     end
+    render :action=>'albums_by_category'
+  end
+
+  def require_admin_for_scaffolding
+    render(:text=>'Access Denied', :status=>'403') if scaffolded_method?(params[:action]) && !admin?
+  end
 end
