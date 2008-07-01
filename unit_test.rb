@@ -69,7 +69,7 @@ describe Artist do
     Artist.delete
   end
 
-  specify "#songs should list all songs the artist took part in" do
+  specify "associations should be correct" do
     lyric1 = Lyric.create
     song1 = Song.create(:lyricid=>lyric1.id)
     lyric2 = Lyric.create(:composer_id=>@artist.id)
@@ -77,6 +77,7 @@ describe Artist do
     lyric3 = Lyric.create(:lyricist_id=>@artist.id)
     song3 = Song.create(:name=>'Y', :lyricid=>lyric3.id)
     @artist.songs.should == [song3, song2]
+    Artist.eager(:songs).all.first.songs.should == [song3, song2]
   end
 end
 
@@ -276,10 +277,8 @@ describe Publisher do
 
   specify "associations be correct" do
     @pub.media.should == [@medium]
-  end
-
-  specify "#albums should give all the albums for the publisher" do
     @pub.albums.should == [@album]
+    Publisher.eager(:albums).all.first.albums.should == [@album]
   end
 end
 
