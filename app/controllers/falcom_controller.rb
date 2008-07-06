@@ -16,7 +16,7 @@ class FalcomController < ApplicationController
     @discs = []
     @albuminfos = {}
     @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
-    Track.filter(:albumid=>i).eager(:song).order(:tracks__discnumber, :tracks__number).each do |track|
+    Track.filter(:albumid=>i).eager(:song).order(:tracks__discnumber, :tracks__number).all do |track|
       @discs[track.discnumber-1][:tracks].push track
     end
     @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
@@ -61,6 +61,10 @@ class FalcomController < ApplicationController
     albums_by_category
   end
 
+  def artists
+    @artists = Artist.order(:name).all
+  end
+  
   def artist
     @artist = Artist[params[:id].to_i]
   end
@@ -102,6 +106,17 @@ class FalcomController < ApplicationController
     @lyric = Lyric[params[:id].to_i]
   end
   
+  def merge_update_artist
+    from, to = params[:from].to_i, params[:to].to_i
+    DB.transaction do
+      [:composer_id, :arranger_id, :vocalist_id, :lyricist_id].each do |x|
+        Lyric.filter(x=>from).update(x=>to)
+      end
+      Artist[from].destroy
+    end
+    redirect_to(:action=>'merge_artist')
+  end
+
   def new_tracklist
     @album = Album[params[:id].to_i]
     redirect_to "/album/#{@album.id}" if @album.tracks.length > 0
@@ -110,7 +125,7 @@ class FalcomController < ApplicationController
   def new_tracklist_table
     @album = Album[params[:id].to_i]
     @games = Game.order(:name)
-    @tracks = Track.select(:tracks__id, :tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).left_outer_join(:songs, :id=>:songid).left_outer_join(:games, :id=>:gameid).left_outer_join(:songs, {:id=>:songs__arrangementof}, :arragements).filter(:tracks__albumid => @album.id).order(:tracks__discnumber, :tracks__number)
+    @tracks = Track.select(:tracks__id, :tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).left_outer_join(:songs, :id=>:songid).left_outer_join(:games, :id=>:gameid).left_outer_join(:songs, {:id=>:songs__arrangementof}, :arrangements).filter(:tracks__albumid => @album.id).order(:tracks__discnumber, :tracks__number)
   end
   
   def photoboard
@@ -158,8 +173,8 @@ class FalcomController < ApplicationController
   end
   
   def update_tracklist_game
-    tracks = Track.filter(:albumid=>params[:id].to_i, :discnumber=>params[:disc].to_i, :number=>((params[:starttrack].to_i)..(params[:endtrack].to_i)))
-    Song.filter(:id=>tracks.map(:songid)).update(:gameid=>params[:game].to_i)
+    tracks = Track.filter(:albumid=>params[:id].to_i, :discnumber=>params[:disc].to_i, :number=>((params[:starttrack].to_i)..(params[:endtrack].to_i))).select(:songid)
+    Song.filter(:id=>tracks).update(:gameid=>params[:game].to_i)
     redirect_to "/new_tracklist_table/#{params[:id]}"
   end
   

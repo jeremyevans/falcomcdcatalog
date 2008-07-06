@@ -18,6 +18,6 @@ Disc: <input type="text" name="disc" size="1" /> Start: <input type="text" name=
 </tr></thead>
 <tbody>
 <% @tracks.each do |track| %>
-  <tr><td><%= track.discnumber %></td><td><%= track.number %></td><td><%= link_to(track.name, "/song/#{track.songid}") %></td><td><%= track.game %></td><td><%= track.arrangement %></td></tr>
+  <tr><td><%= track.discnumber %></td><td><%= track.number %></td><td><%= link_to(track[:name], "/song/#{track[:songid]}") %></td><td><%= track[:game] %></td><td><%= track[:arrangement] %></td></tr>
 <% end %>
 </tbody></table>
