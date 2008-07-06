@@ -1,39 +1,17 @@
 Slightly Dark Hosting Changes:
 
 cgi-bin/cgi2scgi.cgi
-scgi_rails
-sscgi_ctrl
 
-scgi.yaml
-  :port: 4000
+style.yaml
+--- 
+:port: 4000
+:unsupervised: 1
+:handler: scgi
+:logfile: log/style.log
+:pidfile: log/style.pid
 
-environment.rb:
-  module ActionController
-    class AbstractRequest
-      def relative_url_root
-        nil
-      end
-    end
-    module Routing
-      class RouteSet
-        def recognize!(request)
-          string_path = request.request_uri.split('?')[0]
-          string_path.chomp! if string_path[0] == ?/
-          path = string_path.split '/'
-          path.shift
-  
-          hash = recognize_path(path)
-          return recognition_failed(request) unless hash && hash['controller']
-  
-          controller = hash['controller']
-          hash['controller'] = controller.controller_path
-          request.path_parameters = hash
-          controller.new
-        end
-      end
-    end
-  end
-  
 .htaccess:
-  ErrorDocument 404 /cgi-bin/cgi2scgi.cgi
-  DirectoryIndex /cgi-bin/cgi2scgi.cgi
+Redirect /falcom http://falcomcdcatalog.slightlydark.com
+ErrorDocument 404 /cgi-bin/cgi2scgi.cgi
+DirectoryIndex /cgi-bin/cgi2scgi.cgi
+Options All -Indexes

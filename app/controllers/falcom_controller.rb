@@ -1,10 +1,12 @@
 class FalcomController < ApplicationController
-  before_filter :require_admin_for_scaffolding
   helper_method :admin?
   hide_action :admin?
   
-  scaffold_all_models
-  scaffolded_methods.delete('index')
+  if ADMIN
+    before_filter :require_admin_for_scaffolding
+    scaffold_all_models
+    scaffolded_methods.delete('index')
+  end
   
   def admin?
     ADMIN
