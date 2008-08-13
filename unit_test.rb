@@ -1,7 +1,6 @@
 #!/usr/local/bin/spec
 require 'rubygems'
-$:.unshift('/home/jeremy/sequel/sequel/lib')
-$:.unshift('/home/jeremy/sequel/sequel_core/lib')
+$:.unshift('/home/jeremy/sequel/lib')
 require 'sequel'
 DB = Sequel.postgres('falcomcdcatalog_test', :user=>'_postgresql', :host=>'/tmp')
 Dir['app/models/*.rb'].each{|f| require(f)}
