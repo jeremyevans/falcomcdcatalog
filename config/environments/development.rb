@@ -13,4 +13,4 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-DB = Sequel.postgres('falcomcdcatalog', :user=>'_postgresql', :host=>'/tmp', :logger=>Logger.new('log/development.log'))
+DB = Sequel.postgres('falcomcdcatalog', :user=>'_postgresql', :logger=>Logger.new('log/development.log'))
