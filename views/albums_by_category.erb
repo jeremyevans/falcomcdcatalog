@@ -1,0 +1,8 @@
+<% @groups.each do |separator, albums| %>
+  <%= "<h2>#{separator}</h2>" if @groups.length > 1 %>
+  <ul>
+  <% albums.each do |category, album| %>
+      <li><%= "#{category} - " if category %><a href="/album/<%= album.id %>"><%=h album.fullname %></a></li>
+  <% end %>
+  </ul>
+<% end %>

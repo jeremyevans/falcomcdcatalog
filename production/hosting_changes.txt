@@ -1,0 +1,9 @@
+Slightly Dark Hosting Changes:
+
+cgi-bin/cgi2scgi.cgi
+
+.htaccess:
+Redirect /falcom http://falcomcdcatalog.slightlydark.com
+ErrorDocument 404 /cgi-bin/cgi2scgi.cgi
+DirectoryIndex /cgi-bin/cgi2scgi.cgi
+Options All -Indexes

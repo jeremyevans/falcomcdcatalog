@@ -1,8 +1,0 @@
-<h1><%= @pagetitle = @artist.name %></h1>
-
-<h2>Songs Worked On</h2>
-<ul>
-<% @artist.songs.each do |song| %>
-	<li><%= link_to(song.name, "/lyric/#{song.lyricid}") %></li>
-<% end %>
-</ul>

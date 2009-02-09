@@ -1,7 +1,0 @@
-<h1><%= @pagetitle = 'Artists' %></h1>
-
-<ul>
-<% @artists.each do |artist| -%>
-	<li><%= link_to(artist.name, "/artist/#{artist.id}") %></li>
-<% end %>
-</ul>

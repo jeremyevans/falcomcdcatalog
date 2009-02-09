@@ -3,7 +3,7 @@ require 'rubygems'
 $:.unshift('/home/jeremy/sequel/lib')
 require 'sequel'
 DB = Sequel.postgres('falcomcdcatalog_test', :user=>'_postgresql', :host=>'/tmp')
-Dir['app/models/*.rb'].each{|f| require(f)}
+Dir['models/*.rb'].each{|f| require(f)}
 [:albuminfos, :tracks, :discnames, :media, :mediatypes, :publishers, :tracks, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 
 describe Album do

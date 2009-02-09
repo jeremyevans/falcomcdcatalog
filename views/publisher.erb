@@ -1,0 +1,7 @@
+<% @pagetitle = "Albums Published By #{h @publisher.name}" %>
+
+<ul>
+<% @publisher.albums.each do |album| %>
+	<li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
+<% end %>
+</ul>

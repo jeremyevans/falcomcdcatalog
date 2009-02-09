@@ -1,2 +1,4 @@
 log/*
 config/style.yaml
+style.log
+style.pid

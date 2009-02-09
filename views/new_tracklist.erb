@@ -1,0 +1,7 @@
+<% @pagetitle = "Add tracklist for #{@album.fullname}" %>
+
+<p>Separate discs with a blank line</p>
+
+<form method="post" action="/create_tracklist/<%= @album.id %>">
+<textarea name="tracklist" rows="30" cols="80"></textarea><br />
+<input name="commit" type="submit" value="Add Tracklist" /></form>

@@ -1,0 +1,6 @@
+--- 
+:port: 9998
+:unsupervised: 1
+:logfile: /var/www/logs/falcomcdcatalog.style.log
+:pidfile: style.pid
+:adapter: falcomcdcatalog

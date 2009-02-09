@@ -1,7 +1,0 @@
-<h1><%= @pagetitle = 'Series' %></h1>
-
-<ul>
-<% @series.each do |series| -%>
-	<li><%= link_to(series.name, "/series/#{series.id}") %></li>
-<% end %>
-</ul>

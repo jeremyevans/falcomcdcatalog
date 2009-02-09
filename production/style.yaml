@@ -1,0 +1,7 @@
+--- 
+:port: 4000
+:unsupervised: 1
+:handler: scgi
+:logfile: style.log
+:pidfile: style.pid
+:adapter: falcomcdcatalog

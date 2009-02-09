@@ -1,0 +1,23 @@
+<% @pagetitle = @game.name %> <%= link_to("(Edit)", "/edit_game/#{@game.id}") if admin?  %>
+
+<% if admin? %>
+<h4><%= link_to("Associate Albums", "/edit_game/#{@game.id}")  %></h4>
+<% end %>
+
+<% if @game.albums.length > 0 %>
+  <h2>Albums</h2>
+  <ul>
+  <% @game.albums.each do |album| %>
+      <li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+<% if @game.songs.length > 0 %>
+  <h2>Songs</h2>
+  <ul>
+  <% @game.songs.each do |song| %>
+      <li><%= song_link(song) %></li>
+  <% end %>
+  </ul>
+<% end %>
