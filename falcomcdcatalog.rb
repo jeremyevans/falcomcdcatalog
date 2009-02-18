@@ -5,6 +5,7 @@ require 'sinatra/base'
 require 'cgi'
 require 'models'
 require 'rack/contrib'
+require 'config'
 
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
@@ -287,16 +288,9 @@ class FalcomController < Sinatra::Base
   end
 end
 
-app = Rack::Builder.app do
+FALCOMCDCATALOG = Rack::Builder.app do
   use Rack::RelativeRedirect
   run FalcomController
 end
 
-puts "Starting"
-Rack::Handler.get('mongrel').run(app, :Host=>'0.0.0.0', :Port=>3001) do |server|
-  trap(:INT) do
-    server.stop
-    puts "Stopping"
-  end
-end
-
+require 'server'

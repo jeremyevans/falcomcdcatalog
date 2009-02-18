@@ -1,8 +1,8 @@
 #!/usr/local/bin/spec
 require 'rubygems'
-$:.unshift('/home/jeremy/sequel/lib')
+$:.unshift('/data/code/sequel/lib')
 require 'sequel'
-DB = Sequel.postgres('falcomcdcatalog_test', :user=>'_postgresql', :host=>'/tmp')
+DB = Sequel.sqlite('falcomcdcatalogtest.sqlite3')
 Dir['models/*.rb'].each{|f| require(f)}
 [:albuminfos, :tracks, :discnames, :media, :mediatypes, :publishers, :tracks, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 

@@ -1,15 +1,9 @@
 class Lyric < Sequel::Model(:lyricsongs)
   one_to_many :songs, :key=>:lyricid, :one_to_one=>true
   one_to_many :lyric_verses, :key=>:lyricsongid, :order=>[:languageid, :number]
-  one_to_many :english_verses, :class_name=>'LyricVerse', :key=>:lyricsongid, :order=>:number, :graph_conditions=>{:languageid=>1} do |ds|
-    ds.filter(:languageid=>1)
-  end
-  one_to_many :romaji_verses, :class_name=>'LyricVerse', :key=>:lyricsongid, :order=>:number, :graph_conditions=>{:languageid=>2} do |ds|
-    ds.filter(:languageid=>2)
-  end
-  one_to_many :japanese_verses, :class_name=>'LyricVerse', :key=>:lyricsongid, :order=>:number, :graph_conditions=>{:languageid=>3} do |ds|
-    ds.filter(:languageid=>3)
-  end
+  one_to_many :english_verses, :class_name=>'LyricVerse', :key=>:lyricsongid, :order=>:number, :conditions=>{:languageid=>1}
+  one_to_many :romaji_verses, :clone=>:english_verses, :conditions=>{:languageid=>2}
+  one_to_many :japanese_verses, :clone=>:english_verses, :conditions=>{:languageid=>3}
   many_to_one :composer, :class_name=>'Artist', :key=>:composer_id
   many_to_one :arranger, :class_name=>'Artist', :key=>:arranger_id
   many_to_one :vocalist, :class_name=>'Artist', :key=>:vocalist_id

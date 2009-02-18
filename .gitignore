@@ -1,4 +1,2 @@
-log/*
-config/style.yaml
-style.log
 style.pid
+falcomcdcatalogtest.sqlite3
