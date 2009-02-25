@@ -11,7 +11,7 @@ PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Sinatra::Base
   set(:appfile=>'falcomcdcatalog.rb')
-
+ 
   def admin?
     ADMIN
   end
@@ -179,7 +179,7 @@ class FalcomController < Sinatra::Base
   end
   
   get "/photoboard" do
-    @albums = Album.filter([[:picture, nil], [:picture, '']].sql_negate).order(:RANDOM[])
+    @albums = Album.filter([[:picture, nil], [:picture, '']].sql_negate).order(:RANDOM.sql_function)
     erb :photoboard
   end
 
@@ -288,8 +288,21 @@ class FalcomController < Sinatra::Base
   end
 end
 
+class FileServer
+  def initialize(app, root)
+    @app = app
+    @rfile = Rack::File.new(root)
+  end
+  def call(env)
+    res = @rfile.call(env)
+    res[0] == 200 ? res : @app.call(env)
+  end
+end
+
+
 FALCOMCDCATALOG = Rack::Builder.app do
   use Rack::RelativeRedirect
+  use FileServer, 'public'
   run FalcomController
 end
 
