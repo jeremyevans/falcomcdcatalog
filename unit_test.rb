@@ -218,11 +218,11 @@ describe Medium do
   end
 
   specify ".find_albums_by_date should return an array of arrays of date, album, and year" do
-    Medium.find_albums_by_date.should == [['2000-11-23'.to_date, @album2, 2000], ['1999-10-31'.to_date, @album, 1999]]
+    Medium.find_albums_by_date.should == [[Date.parse('2000-11-23'), @album2, 2000], [Date.parse('1999-10-31'), @album, 1999]]
   end
 
   specify ".find_albums_by_date should filter to the given year if provided " do
-    Medium.find_albums_by_date(2000).should == [['2000-11-23'.to_date, @album2, 2000]]
+    Medium.find_albums_by_date(2000).should == [[Date.parse('2000-11-23'), @album2, 2000]]
   end
 
   specify ".find_albums_by_mediatype should return an array of arrays of nil, album, and mediatype name" do
