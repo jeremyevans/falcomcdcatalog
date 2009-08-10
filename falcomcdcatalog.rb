@@ -299,10 +299,20 @@ class FileServer
   end
 end
 
+Sequel::Model.plugin :identity_map
+class SequelIdentityMap
+  def initialize(app)
+    @app = app
+  end
+  def call(env)
+    Sequel::Model.with_identity_map{@app.call(env)}
+  end
+end
 
 FALCOMCDCATALOG = Rack::Builder.app do
   use Rack::RelativeRedirect
   use FileServer, 'public'
+  use SequelIdentityMap
   run FalcomController
 end
 
