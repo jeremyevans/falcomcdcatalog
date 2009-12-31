@@ -5,7 +5,6 @@ require 'sinatra/base'
 require 'cgi'
 require 'models'
 require 'rack/contrib'
-require 'config'
 
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
@@ -315,5 +314,3 @@ FALCOMCDCATALOG = Rack::Builder.app do
   use SequelIdentityMap
   run FalcomController
 end
-
-require 'server'

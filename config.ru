@@ -1,0 +1,2 @@
+require 'falcomcdcatalog'
+run FALCOMCDCATALOG

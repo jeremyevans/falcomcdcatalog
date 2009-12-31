@@ -6,7 +6,7 @@ class Medium < Sequel::Model
   alias_method :scaffold_name, :catalognumber
   
   def self.find_albums_by_date(year = nil)
-    ds = year ? filter{|o| {o.strftime('%Y', :publicationdate).cast_numeric => year}} : self
+    ds = year ? filter(:publicationdate.extract(:year).cast_numeric => year) : self
     ds.eager_graph(:album).order(:publicationdate.desc, :album__sortname).all.collect{|item| [item.publicationdate, item.album, item.publicationdate.year]}.uniq
   end
   

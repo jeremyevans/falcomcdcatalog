@@ -2,7 +2,7 @@
 require 'rubygems'
 $:.unshift('/data/code/sequel/lib')
 require 'sequel'
-DB = Sequel.sqlite('falcomcdcatalogtest.sqlite3')
+DB = Sequel.postgres('fcc_test', :user=>'postgres')
 Dir['models/*.rb'].each{|f| require(f)}
 [:albuminfos, :tracks, :discnames, :media, :mediatypes, :publishers, :tracks, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 
