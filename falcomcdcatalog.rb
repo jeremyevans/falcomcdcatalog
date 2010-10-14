@@ -280,6 +280,8 @@ class FalcomController < Sinatra::Base
     end
 
     require 'scaffolding_extensions'
+    ScaffoldingExtensions.auto_complete_skip_style = true
+    ScaffoldingExtensions.javascript_library = 'JQuery'
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:text_to_string] = true
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:auto_complete].merge!({:sql_name=>'name', :text_field_options=>{:size=>80}, :search_operator=>'ILIKE', :results_limit=>15, :phrase_modifier=>:to_s})
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:habtm_ajax] = true
