@@ -1,4 +1,5 @@
 #!/usr/local/bin/spec
+$: << '.'
 require 'rubygems'
 $:.unshift('/data/code/sequel/lib')
 require 'sequel'
@@ -146,11 +147,19 @@ describe Lyric do
   specify "#japanese_title should be the songs japanese title, game, and original name" do
     @lyric.jsongname = 'X'
     @lyric.song = Song.create(:name=>'X')
-    @lyric.japanese_title.should == "X \357\274\210\343\200\214\343\200\215\357\274\211"
-    @lyric.joriginalsongname = 'Y'
-    @lyric.japanese_title.should == "X \357\274\210\343\200\214Y\343\200\215\357\274\211"
-    @lyric.song.game = Game.create(:jname=>'Z')
-    @lyric.japanese_title.should == "X \357\274\210Z\343\200\214Y\343\200\215\357\274\211"
+    if RUBY_VERSION >= '1.9'
+      @lyric.japanese_title.should == "X \uFF08\u300C\u300D\uFF09"
+      @lyric.joriginalsongname = 'Y'
+      @lyric.japanese_title.should == "X \uFF08\u300CY\u300D\uFF09"
+      @lyric.song.game = Game.create(:jname=>'Z')
+      @lyric.japanese_title.should == "X \uFF08Z\u300CY\u300D\uFF09"
+    else
+      @lyric.japanese_title.should == "X \357\274\210\343\200\214\343\200\215\357\274\211"
+      @lyric.joriginalsongname = 'Y'
+      @lyric.japanese_title.should == "X \357\274\210\343\200\214Y\343\200\215\357\274\211"
+      @lyric.song.game = Game.create(:jname=>'Z')
+      @lyric.japanese_title.should == "X \357\274\210Z\343\200\214Y\343\200\215\357\274\211"
+    end
   end
   
   specify "#title should be the songs title, game, and original name" do

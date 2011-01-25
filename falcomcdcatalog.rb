@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#encoding: utf-8
 require 'rubygems'
 require 'erb'
 require 'sinatra/base'
@@ -9,7 +10,7 @@ require 'rack/contrib'
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Sinatra::Base
-  set(:appfile=>'falcomcdcatalog.rb')
+  set(:appfile=>'falcomcdcatalog.rb', :default_encoding=>'UTF-8')
  
   def admin?
     ADMIN
@@ -168,7 +169,6 @@ class FalcomController < Sinatra::Base
 
   get "/japanese_lyric/:id" do
     @lyric = Lyric[params[:id].to_i]
-    @charset = 'utf-8'
     erb :japanese_lyric
   end
 
