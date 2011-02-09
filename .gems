@@ -1,2 +1,4 @@
+rack
 rack-contrib
+sinatra
 sequel --version '>= 3.7.0'
