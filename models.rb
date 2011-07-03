@@ -4,6 +4,8 @@ require 'logger'
 $:.unshift('/data/code/sequel/lib')
 require 'sequel'
 Sequel.extension :blank
+Sequel::Model.plugin :prepared_statements
+Sequel::Model.plugin :prepared_statements_associations
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
 ADMIN = !ENV['DATABASE_URL']
 
