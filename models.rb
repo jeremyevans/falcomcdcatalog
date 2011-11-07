@@ -7,6 +7,7 @@ Sequel.extension :blank
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
+DB.optimize_model_load = true
 ADMIN = !ENV['DATABASE_URL']
 
 %w'album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song track'.each{|x| require "models/#{x}"}
