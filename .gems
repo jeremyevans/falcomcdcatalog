@@ -1,4 +1,4 @@
 rack
 rack-contrib
 sinatra
-sequel --version '>= 3.7.0'
+sequel --version '>= 3.30.0'
