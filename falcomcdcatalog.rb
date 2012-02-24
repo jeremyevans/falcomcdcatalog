@@ -7,6 +7,15 @@ require 'cgi'
 require 'models'
 require 'rack/contrib'
 
+# Disable caching in tilt in admin/development mode
+if ADMIN
+  class Tilt::Cache
+    def fetch(*)
+      yield
+    end
+  end
+end
+
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Sinatra::Base
@@ -55,7 +64,7 @@ class FalcomController < Sinatra::Base
   end
   
   def mail_to_maintainer(text = nil)
-    email = 'falcomcdcatalog@falcomcdcatalog.no-ip.org'
+    email = 'falcomcdcatalog@jeremyevans.net'
     link_to(text||email, "mailto:#{email}")
   end
 
@@ -91,7 +100,7 @@ class FalcomController < Sinatra::Base
     erb :index
   end
 
-  get %r{\A/(song_search|feedback|index|news|info|order)\z} do
+  get %r{\A/(feedback|index|news|info|order)\z} do
     erb params[:captures][0].to_sym
   end
 
