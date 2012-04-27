@@ -114,7 +114,7 @@ class FalcomController < Sinatra::Base
       @discs[track.discnumber-1][:tracks].push track
     end
     @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
-    @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher)
+    @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher).all
     erb :album
   end
 
@@ -187,7 +187,7 @@ class FalcomController < Sinatra::Base
   end
   
   get "/photoboard" do
-    @albums = Album.filter([[:picture, nil], [:picture, '']].sql_negate).order(:RANDOM.sql_function)
+    @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM{}}
     erb :photoboard
   end
 
@@ -233,7 +233,7 @@ class FalcomController < Sinatra::Base
   end
   
   get "/song_search_results" do
-    @songs = Song.filter(:name.ilike("%#{params[:songname]}%")).order(:name).all
+    @songs = Song.filter(Sequel.ilike(:name, "%#{params[:songname]}%")).order(:name).all
     erb :song_search_results
   end
   
