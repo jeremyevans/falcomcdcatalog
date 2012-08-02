@@ -6,8 +6,8 @@
 
 <h3>Appears on the following albums:</h3>
 <ul>
-<% @tracks.each do |track| %>
-	<li><%= link_to(track.album_and_number, "/album/#{track.albumid}") %></li>
+<% @song.tracks.each do |track| %>
+	<li><%= link_to(track.album_and_number, "/album/#{track.album.id}") %></li>
 <% end %>
 </ul>
 

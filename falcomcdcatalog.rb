@@ -110,7 +110,7 @@ class FalcomController < Sinatra::Base
     @discs = []
     @albuminfos = {}
     @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
-    Track.filter(:albumid=>i).eager(:song).order(:tracks__discnumber, :tracks__number).all do |track|
+    @album.tracks.each do |track|
       @discs[track.discnumber-1][:tracks].push track
     end
     @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
@@ -228,7 +228,6 @@ class FalcomController < Sinatra::Base
   get "/song/:id?" do
     i = params[:id].to_i
     @song = Song[i]
-    @tracks = Track.eager_graph(:album).order(:album__fullname, :tracks__discnumber, :tracks__number).filter(:tracks__songid=>i).all
     erb :song
   end
   
@@ -245,35 +244,24 @@ class FalcomController < Sinatra::Base
     end
   
     post "/create_tracklist/:id" do
-      album = Album[params[:id].to_i]
-      if album.tracks.length == 0  
-        songs = {}
-        Song.each{|s| songs[s.name.downcase.gsub(/\s/, "")] = s.id}
-        disctracklists = params[:tracklist].strip.gsub("\r", "").split(/\n\n+/)
-        DB.transaction do
-          disctracklists.each_with_index do |tracklist, i| i+=1
-            Discname.create(:albumid=>album.id, :number=>i, :name=>"Disc #{i}") if disctracklists.length > 1
-            tracklist.split("\n").each_with_index do |track, j| j+=1
-              track = track.strip.gsub('&', "&amp;").gsub('"', "&quot;")
-              songid = track == '-' ? 1 : (songs[track.downcase.gsub(/\s/, "")] || (songs[track.downcase.gsub(/\s/, "")] = Song.create(:name=>track).id)) 
-              Track.create(:albumid=>album.id, :discnumber=>i, :number=>j, :songid=>songid)
-            end
-          end
-        end
-      end
+      Album[params[:id].to_i].create_tracklist(params[:tracklist])
       redirect "/album/#{album.id}" 
     end
 
     get "/new_tracklist_table/:id" do
       @album = Album[params[:id].to_i]
       @games = Game.order(:name)
-      @tracks = Track.select(:tracks__id, :tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).left_outer_join(:songs, :id=>:songid).left_outer_join(:games, :id=>:gameid).left_outer_join(:songs, {:id=>:songs__arrangementof}, :arrangements).filter(:tracks__albumid => @album.id).order(:tracks__discnumber, :tracks__number)
+      @tracks = @album.tracks_dataset.
+        select(:tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).
+        left_join(:songs, :id=>:songid).
+        left_join(:games, :id=>:gameid).
+        left_join(:songs___arrangements, :id=>:songs__arrangementof).
+        order(:tracks__discnumber, :tracks__number)
       erb :new_tracklist_table
     end
   
     post "/update_tracklist_game/:id" do
-      tracks = Track.filter(:albumid=>params[:id].to_i, :discnumber=>params[:disc].to_i, :number=>((params[:starttrack].to_i)..(params[:endtrack].to_i))).select(:songid)
-      Song.filter(:id=>tracks).update(:gameid=>params[:game].to_i)
+      Album[params[:id].to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
       redirect "/new_tracklist_table/#{params[:id]}"
     end
   
@@ -294,7 +282,7 @@ class FalcomController < Sinatra::Base
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:text_to_string] = true
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:auto_complete].merge!({:sql_name=>'name', :text_field_options=>{:size=>80}, :search_operator=>'ILIKE', :results_limit=>15, :phrase_modifier=>:to_s})
     ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:habtm_ajax] = true
-    scaffold_all_models :only=>[Album, Albuminfo, Artist, Discname, Game, Lyric, LyricVerse, Mediatype, Medium, Publisher, Series, Song, Track]
+    scaffold_all_models :only=>[Album, Albuminfo, Artist, Discname, Game, Lyric, LyricVerse, Mediatype, Medium, Publisher, Series, Song]
   end
 end
 
@@ -309,19 +297,8 @@ class FileServer
   end
 end
 
-Sequel::Model.plugin :identity_map
-class SequelIdentityMap
-  def initialize(app)
-    @app = app
-  end
-  def call(env)
-    Sequel::Model.with_identity_map{@app.call(env)}
-  end
-end
-
 FALCOMCDCATALOG = Rack::Builder.app do
   use Rack::RelativeRedirect
   use FileServer, 'public'
-  use SequelIdentityMap
   run FalcomController
 end

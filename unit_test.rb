@@ -1,11 +1,8 @@
 #!/usr/local/bin/spec
-$: << '.'
-require 'rubygems'
-$:.unshift('/data/code/sequel/lib')
-require 'sequel'
-DB = Sequel.postgres('fcc_test', :user=>'postgres')
-Dir['models/*.rb'].each{|f| require(f)}
-[:albuminfos, :tracks, :discnames, :media, :mediatypes, :publishers, :tracks, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
+$: << File.dirname(__FILE__)
+ENV['DATABASE_URL'] = 'postgres:///fcc_test?user=postgres'
+require 'models'
+[:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 
 describe Album do
   before do
@@ -14,6 +11,9 @@ describe Album do
   end
   after do
     Album.delete
+    Song.delete
+    Discname.delete
+    Game.delete
   end
 
   specify "associations be correct" do
@@ -39,6 +39,116 @@ describe Album do
 
   specify "#<=> should go by sortname" do
     [@album, @album2].sort.should == [@album2, @album]
+  end
+
+  specify "#tracks_dataset should be a dataset for the album's tracks, including the album_id" do
+    @album.tracks_dataset.all.should == []
+    @album.update(:tracks=>[{:discnumber=>1, :number=>2, :songid=>1}])
+    @album.tracks_dataset.all.should == [Track.load(:albumid=>@album.id, :discnumber=>1, :number=>2, :songid=>1)]
+  end
+
+  specify "#tracks should be an array of the tracks with eagerly loaded songs" do
+    @album.tracks.should == []
+    song = Song.create(:name=>'A Song')
+    @album.update(:tracks=>[{:discnumber=>1, :number=>2, :songid=>song.id}])
+    tracks =  @album.tracks
+    tracks.should == [Track.load(:discnumber=>1, :number=>2, :songid=>song.id)]
+    @album.tracks.should equal(tracks)
+    tracks.first.associations[:song].should == song
+  end
+
+  specify "#create_tracklist should raise an error if the album already has a tracklist" do
+    @album.create_tracklist("Track1\nTrack2")
+    proc{@album.create_tracklist("Track1\nTrack2")}.should raise_error
+  end
+
+  specify "#create_tracklist should create tracks from an input string" do
+    @album.create_tracklist("Track1\nTrack2")
+    Discname.count.should == 0
+    songs = Song.order(:name).all
+    songs.length.should == 2
+    songs.first[:name].should == 'Track1'
+    songs.last[:name].should == 'Track2'
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
+  end
+
+  specify "#create_tracklist should create discs and tracks from an input string with blank lines" do
+    @album.create_tracklist("Track1\n\nTrack2")
+    discs = Discname.all
+    discs.length.should == 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    songs = Song.order(:name).all
+    songs.length.should == 2
+    songs.first[:name].should == 'Track1'
+    songs.last[:name].should == 'Track2'
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
+  end
+
+  specify "#create_tracklist should use existing songs instead of creating new ones" do
+    s1 = Song.create(:name=>'Track1')
+    s2 = Song.create(:name=>'Track2')
+    @album.create_tracklist("Track1\nTrack2")
+    songs = Song.order(:name).all.should == [s1, s2]
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>s1.id), Track.load(:discnumber=>1, :number=>2, :songid=>s2.id)]
+  end
+
+  specify "#create_tracklist should escape & and \"" do
+    @album.create_tracklist("Tr&ck1\nTr\"ck2")
+    Discname.count.should == 0
+    songs = Song.order(:name).all
+    songs.length.should == 2
+    songs.first[:name].should == 'Tr&amp;ck1'
+    songs.last[:name].should == 'Tr&quot;ck2'
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
+  end
+
+  specify "#create_tracklist should handle CRLF" do
+    @album.create_tracklist("Track1\r\nTrack2\r\n\r\nTrack3")
+    discs = Discname.all
+    discs.length.should == 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    songs = Song.order(:name).all
+    songs.length.should == 3
+    songs[0][:name].should == 'Track1'
+    songs[1][:name].should == 'Track2'
+    songs[2][:name].should == 'Track3'
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs[0].id), Track.load(:discnumber=>1, :number=>2, :songid=>songs[1].id), Track.load(:discnumber=>2, :number=>1, :songid=>songs[2].id)]
+  end
+
+  specify "#create_tracklist should an arbitrary number of blank lines" do
+    @album.create_tracklist("Track1\n\n\n\nTrack2")
+    discs = Discname.all
+    discs.length.should == 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    songs = Song.order(:name).all
+    songs.length.should == 2
+    songs.first[:name].should == 'Track1'
+    songs.last[:name].should == 'Track2'
+    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
+  end
+
+  specify "#update_tracklist_game should update the game for the songs in the given range in the tracklist" do
+    s1 = Song.create(:name=>'Track1')
+    s2 = Song.create(:name=>'Track2')
+    @album.create_tracklist("Track1\nTrack2")
+
+    g = Game.create(:name=>'Game')
+    @album.update_tracklist_game(1, 1, 1, g.id)
+    s1.refresh.gameid.should == g.id
+    s2.refresh.gameid.should == nil
+
+    g2 = Game.create(:name=>'Game')
+    @album.update_tracklist_game(1, 2, 2, g2.id)
+    s1.refresh.gameid.should == g.id
+    s2.refresh.gameid.should == g2.id
+
+    g3 = Game.create(:name=>'Game')
+    @album.update_tracklist_game(1, 1, 2, g3.id)
+    s1.refresh.gameid.should == g3.id
+    s2.refresh.gameid.should == g3.id
   end
 end
 
@@ -306,14 +416,14 @@ end
 
 describe Song do
   before do
-    @song = Song.create
+    @song = Song.create(:name=>'S')
   end
   after do
     Song.delete
+    Album.delete
   end
 
   specify "associations be correct" do
-    @song.tracks.should == []
     @song.arrangements.should == []
     @song.game.should == nil
     @song.lyric.should == nil
@@ -321,8 +431,17 @@ describe Song do
   end
 
   specify "#scaffold_name should be the first 51 characters of name" do
+    @song.scaffold_name.should == 'S'
     @song.name = '1'*90
     @song.scaffold_name.should == '1'*51
+  end
+
+  specify "#tracks should be an array of tracks associated to the song, with an associated album" do
+    @song.tracks.should == []
+    album = Album.create(:fullname=>'A')
+    album.create_tracklist("S")
+    album.tracks.first.song.should == @song
+    Song.first.tracks.should == album.tracks
   end
 end
 
@@ -340,16 +459,12 @@ describe Track do
 
   specify "associations be correct" do
     @track.song(true).should == @song
-    @track.album(true).should == @album
   end
 
   specify "#album_and_number should give the album, number, and discnumber (if numdiscs is > 1)" do
+    @track.album = @album
     @track.album_and_number.should == 'Blah, Disc 2, Track 10'
     @track.album.numdiscs = 1
     @track.album_and_number.should == 'Blah, Track 10'
-  end
-
-  specify "#scaffold_name should give the album, discnumber, number, and song name" do
-    @track.scaffold_name.should == 'Blah-2-10-Song'
   end
 end

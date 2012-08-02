@@ -4,14 +4,13 @@ require 'logger'
 $: << File.dirname(__FILE__)
 $:.unshift('/data/code/sequel/lib')
 require 'sequel/no_core_ext'
-Sequel.extension :blank, :pg_auto_parameterize, :pg_statement_cache
+Sequel.extension :blank, :pg_array_ops, :pg_row_ops
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
+DB.extension(:pg_array, :pg_row)
 DB.optimize_model_load = true
-DB.extend Sequel::Postgres::AutoParameterize::DatabaseMethods
-DB.extend Sequel::Postgres::StatementCache::DatabaseMethods
 ADMIN = !ENV['DATABASE_URL']
-#DB.logger = Logger.new($stdout)
+# DB.logger = Logger.new($stdout)
 
-%w'album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song track'.each{|x| require "models/#{x}"}
+%w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require "models/#{x}"}

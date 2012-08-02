@@ -1,5 +1,4 @@
 class Song < Sequel::Model
-  one_to_many :tracks, :key => :songid
   one_to_many :arrangements, :class_name=>'Song', :key=>:arrangementof
   many_to_one :game, :key=>:gameid
   many_to_one :lyric, :key=>:lyricid
@@ -11,5 +10,18 @@ class Song < Sequel::Model
   
   def scaffold_name
     name[0..50]
+  end
+
+  def tracks
+    return @tracks if @tracks
+    @tracks = []
+    song_id = id
+    Album.where{Sequel.pg_array(song_ids(tracks)).overlaps(Sequel.pg_array([song_id]))}.each do |album|
+      album[:tracks].select{|t| t.songid == song_id}.each do |track|
+        track.album = album
+        @tracks << track
+      end
+    end
+    @tracks
   end
 end
