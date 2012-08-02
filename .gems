@@ -2,3 +2,4 @@ rack
 rack-contrib
 sinatra
 sequel --version '>= 3.38.0'
+sequel_pg --version '>= 1.5.1'
