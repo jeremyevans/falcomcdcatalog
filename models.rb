@@ -9,7 +9,7 @@ Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
 DB.extension(:pg_array, :pg_row)
-DB.optimize_model_load = true
+DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 ADMIN = !ENV['DATABASE_URL']
 # DB.logger = Logger.new($stdout)
 
