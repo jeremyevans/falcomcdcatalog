@@ -16,7 +16,7 @@ class Song < Sequel::Model
     return @tracks if @tracks
     @tracks = []
     song_id = id
-    Album.where{Sequel.pg_array(song_ids(tracks)).overlaps(Sequel.pg_array([song_id]))}.each do |album|
+    Album.where{{song_id=>Sequel.pg_array(song_ids(tracks)).any}}.each do |album|
       album[:tracks].select{|t| t.songid == song_id}.each do |track|
         track.album = album
         @tracks << track
