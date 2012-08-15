@@ -22,7 +22,7 @@ class Album < Sequel::Model
       where(:id=>id).
       select(:id___albumid, Sequel.pg_array(:tracks).unnest.as(:t)).
       from_self(:alias=>:tracks).
-      select(:albumid, Sequel.lit("(?).*", Sequel.pg_row(:tracks)[:t])).
+      select(:albumid, Sequel.pg_row(:tracks__t).*).
       from_self(:alias=>:tracks)
   end
 
