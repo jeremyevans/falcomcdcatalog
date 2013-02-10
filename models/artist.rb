@@ -1,6 +1,6 @@
 class Artist < Sequel::Model
   @scaffold_select_order = [:name]
-  one_to_many :songs, :order=>:songs__name, :dataset=>proc{Song.select_all(:songs).join(Lyric, :id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id])}, :eager_loader=>(proc do |key_hash, records, associations|
+  one_to_many :songs, :order=>:songs__name, :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(Lyric, :id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id])}, :eager_loader=>(proc do |key_hash, records, associations|
       h = key_hash[:id]
       ids = h.keys
       records.each{|r| r.associations[:songs] = []}
