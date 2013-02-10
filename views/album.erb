@@ -16,7 +16,7 @@
       <% end %>
       <ol start='<%= j %>'>
     <% end %>
-    <li><%= song_link(track.song) %> <%= '(%s)' % link_to("Edit", "/edit_track/#{track.id}") if admin? %> <%= '(%s)' % link_to("Lyrics", "/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
+    <li><%= song_link(track.song) %> <%= '(%s)' % link_to("Lyrics", "/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
   <% end %>
   </ol>
 <% end %>
