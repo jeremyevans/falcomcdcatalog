@@ -244,7 +244,8 @@ class FalcomController < Sinatra::Base
     end
   
     post "/create_tracklist/:id" do
-      Album[params[:id].to_i].create_tracklist(params[:tracklist])
+      album = Album[params[:id].to_i]
+      album.create_tracklist(params[:tracklist])
       redirect "/album/#{album.id}" 
     end
 
