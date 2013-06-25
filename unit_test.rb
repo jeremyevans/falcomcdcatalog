@@ -10,10 +10,10 @@ describe Album do
     @album2 = Album.create(:fullname=>'OtherAlbum', :sortname=>'OtherAlbum')
   end
   after do
-    Album.delete
-    Song.delete
-    Discname.delete
-    Game.delete
+    Album.dataset.delete
+    Song.dataset.delete
+    Discname.dataset.delete
+    Game.dataset.delete
   end
 
   specify "associations be correct" do
@@ -157,7 +157,7 @@ describe Albuminfo do
     @info = Albuminfo.create(:discnumber=>1, :starttrack=>2, :endtrack=>4, :info=>'Bonus')
   end
   after do
-    Albuminfo.delete
+    Albuminfo.dataset.delete
   end
 
   specify "associations be correct" do
@@ -174,9 +174,9 @@ describe Artist do
     @artist = Artist.create(:name=>'blah')
   end
   after do
-    Song.delete
-    Lyric.delete
-    Artist.delete
+    Song.dataset.delete
+    Lyric.dataset.delete
+    Artist.dataset.delete
   end
 
   specify "associations should be correct" do
@@ -196,7 +196,7 @@ describe Discname do
     @disc = Discname.create
   end
   after do
-    Discname.delete
+    Discname.dataset.delete
   end
 
   specify "associations be correct" do
@@ -209,7 +209,7 @@ describe Game do
     @game = Game.create
   end
   after do
-    Game.delete
+    Game.dataset.delete
   end
 
   specify "associations be correct" do
@@ -224,10 +224,10 @@ describe Lyric do
     @lyric = Lyric.create
   end
   after do
-    Song.delete
-    Game.delete
-    LyricVerse.delete
-    Lyric.delete
+    Song.dataset.delete
+    Game.dataset.delete
+    LyricVerse.dataset.delete
+    Lyric.dataset.delete
   end
 
   specify "associations be correct" do
@@ -287,7 +287,7 @@ describe LyricVerse do
     @verse = LyricVerse.create
   end
   after do
-    LyricVerse.delete
+    LyricVerse.dataset.delete
   end
 
   specify "associations be correct" do
@@ -307,7 +307,7 @@ describe Mediatype do
     @mtype = Mediatype.create
   end
   after do
-    Mediatype.delete
+    Mediatype.dataset.delete
   end
 
   specify "associations be correct" do
@@ -325,9 +325,9 @@ describe Medium do
     @medium2 = Medium.create(:mediatype=>@mtype2, :publicationdate=>'2000-11-23', :album=>@album2)
   end
   after do
-    Medium.delete
-    Mediatype.delete
-    Album.delete
+    Medium.dataset.delete
+    Mediatype.dataset.delete
+    Album.dataset.delete
   end
 
   specify "associations be correct" do
@@ -388,9 +388,9 @@ describe Publisher do
     @medium = Medium.create(:publisher=>@pub, :price=>900, :publicationdate=>'1999-10-31', :album=>@album)
   end
   after do
-    Medium.delete
-    Album.delete
-    Publisher.delete
+    Medium.dataset.delete
+    Album.dataset.delete
+    Publisher.dataset.delete
   end
 
   specify "associations be correct" do
@@ -405,7 +405,7 @@ describe Series do
     @series = Series.create
   end
   after do
-    Series.delete
+    Series.dataset.delete
   end
 
   specify "associations be correct" do
@@ -419,8 +419,8 @@ describe Song do
     @song = Song.create(:name=>'S')
   end
   after do
-    Song.delete
-    Album.delete
+    Song.dataset.delete
+    Album.dataset.delete
   end
 
   specify "associations be correct" do
@@ -452,9 +452,9 @@ describe Track do
     @track = Track.create(:number=>10, :discnumber=>2, :album=>@album, :song=>@song)
   end
   after do
-    Track.delete
-    Album.delete
-    Song.delete
+    Track.dataset.delete
+    Album.dataset.delete
+    Song.dataset.delete
   end
 
   specify "associations be correct" do
