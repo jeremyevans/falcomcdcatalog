@@ -1,5 +1,5 @@
 rack
 rack-contrib
 sinatra --version '< 1.3.0'
-sequel --version '>= 3.44.0'
-sequel_pg --version '>= 1.6.4'
+sequel --version '>= 4.4.0'
+sequel_pg --version '>= 1.6.8'
