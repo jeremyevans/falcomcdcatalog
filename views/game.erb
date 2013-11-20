@@ -1,8 +1,4 @@
-<% @pagetitle = @game.name %> <%= link_to("(Edit)", "/edit_game/#{@game.id}") if admin?  %>
-
-<% if admin? %>
-<h4><%= link_to("Associate Albums", "/edit_game/#{@game.id}")  %></h4>
-<% end %>
+<% @pagetitle = @game.name %> <%= link_to("(Edit)", "/Game/edit/#{@game.id}") if admin?  %>
 
 <% if @game.albums.length > 0 %>
   <h2>Albums</h2>

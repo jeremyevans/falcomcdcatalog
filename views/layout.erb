@@ -11,6 +11,7 @@
 <% if admin? %>
 <link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
 <script src="/javascripts/jquery.autocomplete.js" type="text/javascript"></script>
+<script src="/javascripts/autoforme.js" type="text/javascript"></script>
 <% end %>
 </head>
 
@@ -64,15 +65,15 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="/manage_album">Manage Album</a></li>
-              <li><a href="/manage_albuminfo">Manage Album Info</a></li>
-              <li><a href="/manage_medium">Manage Album Release</a></li>
-              <li><a href="/manage_discname">Manage Disc Name</a></li>
-              <li><a href="/manage_game">Manage Game</a></li>
-              <li><a href="/manage_lyric">Manage Lyric</a></li>
-              <li><a href="/manage_publisher">Manage Publisher</a></li>
-              <li><a href="/manage_series">Manage Series</a></li>
-              <li><a href="/manage_song">Manage Song</a></li>
+              <li><a href="/Album/edit">Manage Album</a></li>
+              <li><a href="/Albuminfo/edit">Manage Album Info</a></li>
+              <li><a href="/Medium/edit">Manage Album Release</a></li>
+              <li><a href="/Discname/edit">Manage Disc Name</a></li>
+              <li><a href="/Game/edit">Manage Game</a></li>
+              <li><a href="/Lyric/edit">Manage Lyric</a></li>
+              <li><a href="/Publisher/edit">Manage Publisher</a></li>
+              <li><a href="/Series/edit">Manage Series</a></li>
+              <li><a href="/Song/edit">Manage Song</a></li>
             </ul>
           </li>
         <% end %>

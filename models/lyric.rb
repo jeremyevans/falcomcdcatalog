@@ -10,17 +10,6 @@ class Lyric < Sequel::Model(:lyricsongs)
   many_to_one :vocalist, :class_name=>'Artist', :key=>:vocalist_id
   many_to_one :lyricist, :class_name=>'Artist', :key=>:lyricist_id
   
-  @scaffold_fields = [:rsongname, :jsongname, :joriginalsongname, :arranger, :composer, :lyricist, :vocalist]
-  @scaffold_select_order = :song__name
-  @scaffold_include = :song
-  @scaffold_browse_include = :song
-  @scaffold_associations = [:song, :arranger, :composer, :lyricist, :vocalist, :english_verses, :romaji_verses, :japanese_verses]
-  @scaffold_use_eager_graph = true
-  
-  def scaffold_name
-    song.name
-  end
-     
   def has_japanese_verses?
     !japanese_verses.empty?
   end

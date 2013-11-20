@@ -16,6 +16,4 @@ class Publisher < Sequel::Model
       end
       records.each{|r| r.associations[:albums].uniq!}
     end)
-  @scaffold_select_order = :name
-  @scaffold_fields = [:name]
 end

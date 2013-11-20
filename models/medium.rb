@@ -2,8 +2,6 @@ class Medium < Sequel::Model
   many_to_one :album, :key => :albumid
   many_to_one :mediatype, :key => :mediatypeid
   many_to_one :publisher, :key => :publisherid
-  @scaffold_fields = [:album, :mediatype, :publisher, :catalognumber, :price, :publicationdate]
-  alias_method :scaffold_name, :catalognumber
   
   def self.find_albums_by_date(year = nil)
     ds = year ? where(Sequel.extract(:year, :publicationdate).cast_numeric => year) : self

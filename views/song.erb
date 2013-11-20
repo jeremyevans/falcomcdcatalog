@@ -1,4 +1,4 @@
-<% @pagetitle = @song.name %> <%= link_to("(Edit)", "/edit_song/#{@song.id}") if admin?  %>
+<% @pagetitle = @song.name %> <%= link_to("(Edit)", "/Song/edit/#{@song.id}") if admin?  %>
 
 <%= content_tag(:h4, "From %s" % link_to(@song.game.name, "/game/#{@song.gameid}")) if @song.gameid %>
 <%= content_tag(:h4, "Arrangement of %s" % link_to(@song.arrangement.name, "/song/#{@song.arrangementof}")) if @song.arrangementof %>

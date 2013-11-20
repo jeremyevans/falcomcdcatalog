@@ -19,8 +19,11 @@ end
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Sinatra::Base
+  use Rack::RelativeRedirect
+
   set(:appfile=>'falcomcdcatalog.rb', :default_encoding=>'UTF-8')
- 
+  enable :static
+
   def admin?
     ADMIN
   end
@@ -237,6 +240,9 @@ class FalcomController < Sinatra::Base
   end
   
   if ADMIN
+    require 'sinatra/flash'
+    register Sinatra::Flash
+ 
     get "/new_tracklist/:id" do
       @album = Album[params[:id].to_i]
       redirect_to("/album/#{@album.id}")if @album.tracks.length > 0
@@ -266,40 +272,72 @@ class FalcomController < Sinatra::Base
       redirect "/new_tracklist_table/#{params[:id]}"
     end
   
-    post "/merge_update_artist" do
-      from, to = params[:from].to_i, params[:to].to_i
-      DB.transaction do
-        [:composer_id, :arranger_id, :vocalist_id, :lyricist_id].each do |x|
-          Lyric.filter(x=>from).update(x=>to)
-        end
-        Artist[from].destroy
+    $: << '/data/code/forme/lib'
+    $: << '/data/code/autoforme/lib'
+    require 'autoforme'
+
+    Forme.register_config(:mine, :base=>:default, :labeler=>:explicit, :wrapper=>:div)
+    Forme.default_config = :mine
+
+    AutoForme.for(:sinatra, self) do
+      model_type :sequel
+      inline_mtm_associations :all
+      association_links :all
+
+      model Album do
+        order :sortname
+        columns [:fullname, :sortname, :picture, :numdiscs]
+        display_name :fullname
       end
-      redirect('/merge_artist')
+      model Albuminfo do
+        columns [:album, :discnumber, :starttrack, :endtrack, :info]
+        display_name{|obj| "#{obj.discnumber}-#{obj.starttrack}-#{obj.endtrack}-#{obj.info}"}
+      end
+      model Artist do
+        order :name
+      end
+      model Discname do
+        columns [:album, :number, :name]
+      end
+      model Game do
+        order :name
+        columns [:series, :name, :jname]
+      end
+      model Lyric do
+        columns [:rsongname, :jsongname, :joriginalsongname, :arranger, :composer, :lyricist, :vocalist]
+        order :song__name
+        eager_graph :song
+        display_name{|obj| obj.song.name}
+      end
+      model LyricVerse do
+        columns [:lyric, :number, :verse, :languageid]
+        order [:lyricsongid, :languageid, :number, :verse]
+        display_name{|obj| "Verse #{obj.number} - #{obj.languageid != 3 ? obj.verse[0...40].gsub(/<br? ?\/?>?/, ', ') : 'Japanese text'}"}
+      end
+      model Mediatype do
+        order :name
+        columns [:name]
+      end
+      model Medium do
+        columns [:album, :mediatype, :publisher, :catalognumber, :price, :publicationdate]
+        display_name :catalognumber
+      end
+      model Publisher do
+        order :name
+        columns [:name]
+      end
+      model Series do
+        order :name
+        columns [:name]
+      end
+      model Song do
+        order :name
+        columns [:name, :game, :lyric, :arrangement]
+        autocomplete_options :limit=>15
+        display_name{|obj| obj.name[0..50]}
+      end
     end
-
-    require 'scaffolding_extensions'
-    ScaffoldingExtensions.auto_complete_skip_style = true
-    ScaffoldingExtensions.javascript_library = 'JQuery'
-    ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:text_to_string] = true
-    ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:auto_complete].merge!({:sql_name=>'name', :text_field_options=>{:size=>80}, :search_operator=>'ILIKE', :results_limit=>15, :phrase_modifier=>:to_s})
-    ::ScaffoldingExtensions::MetaModel::SCAFFOLD_OPTIONS[:habtm_ajax] = true
-    scaffold_all_models :only=>[Album, Albuminfo, Artist, Discname, Game, Lyric, LyricVerse, Mediatype, Medium, Publisher, Series, Song]
   end
 end
 
-class FileServer
-  def initialize(app, root)
-    @app = app
-    @rfile = Rack::File.new(root)
-  end
-  def call(env)
-    res = @rfile.call(env)
-    res[0] == 200 ? res : @app.call(env)
-  end
-end
-
-FALCOMCDCATALOG = Rack::Builder.app do
-  use Rack::RelativeRedirect
-  use FileServer, 'public'
-  run FalcomController
-end
+FALCOMCDCATALOG = FalcomController

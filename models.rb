@@ -5,6 +5,7 @@ $: << File.dirname(__FILE__)
 $:.unshift('/data/code/sequel/lib')
 require 'sequel/no_core_ext'
 Sequel.extension :blank, :pg_array_ops, :pg_row_ops
+Sequel::Model.plugin :table_select
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
