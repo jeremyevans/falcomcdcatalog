@@ -21,8 +21,20 @@ PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 class FalcomController < Sinatra::Base
   use Rack::RelativeRedirect
 
+  # enable :static broken on Heroku Bamboo
+  class FileServer
+    def initialize(app, root)
+      @app = app
+      @rfile = Rack::File.new(root)
+    end
+    def call(env)
+      res = @rfile.call(env)
+      res[0] == 200 ? res : @app.call(env)
+    end
+  end
+  use FileServer, 'public'
+
   set(:appfile=>'falcomcdcatalog.rb', :default_encoding=>'UTF-8')
-  enable :static
 
   def admin?
     ADMIN
