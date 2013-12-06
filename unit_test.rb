@@ -33,10 +33,6 @@ describe Album do
     Album.group_all_by_sortname('T').should == [[nil, @album, 'T']]
   end
 
-  specify "#scaffold_name should be the alias of fullname" do
-    @album.scaffold_name.should == 'A TestAlbum'
-  end
-
   specify "#<=> should go by sortname" do
     [@album, @album2].sort.should == [@album2, @album]
   end
@@ -163,10 +159,6 @@ describe Albuminfo do
   specify "associations be correct" do
     @info.album.should == nil
   end
-
-  specify "#scaffold_name should be correct" do
-    @info.scaffold_name.should == '1-2-4-Bonus'
-  end
 end
 
 describe Artist do
@@ -242,11 +234,6 @@ describe Lyric do
     @lyric.lyricist.should == nil
   end
 
-  specify "#scaffold_name should be the song's name" do
-    @lyric.song = Song.create(:name=>'Blah')
-    @lyric.scaffold_name == 'Blah'
-  end
-
   specify "#has_japanese_verses? should return whether there are any japanese verses" do
     @lyric.has_japanese_verses?.should == false
     LyricVerse.create(:lyricsongid=>@lyric.id, :languageid=>3)
@@ -292,13 +279,6 @@ describe LyricVerse do
 
   specify "associations be correct" do
     @verse.lyric.should == nil
-  end
-
-  specify "#scaffold_name should be correct" do
-    @verse.set(:verse => '1234567890' * 5, :number=>3)
-    @verse.scaffold_name.should == "Verse 3 - #{'1234567890' * 4}"
-    @verse.languageid = 3
-    @verse.scaffold_name.should == "Verse 3 - Japanese text"
   end
 end
 
@@ -373,12 +353,6 @@ describe Medium do
     @medium.priceid.should == 900
     @medium2.priceid.should == 0
   end
-
-  specify "#scaffold_name should be an alias of catalognumber" do
-    @medium.scaffold_name.should == nil
-    @medium.catalognumber = '1234-5678'
-    @medium.scaffold_name.should == '1234-5678'
-  end
 end
 
 describe Publisher do
@@ -428,12 +402,6 @@ describe Song do
     @song.game.should == nil
     @song.lyric.should == nil
     @song.arrangement.should == nil
-  end
-
-  specify "#scaffold_name should be the first 51 characters of name" do
-    @song.scaffold_name.should == 'S'
-    @song.name = '1'*90
-    @song.scaffold_name.should == '1'*51
   end
 
   specify "#tracks should be an array of tracks associated to the song, with an associated album" do
