@@ -1,11 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    autoforme (0.1.0)
+      forme (>= 0.9.0)
+      rack
+      sequel (>= 3.0.0)
+    forme (0.9.0)
     kgio (2.7.4)
     pg (0.17.0)
     rack (1.5.2)
-    rack-contrib (1.1.0)
-      rack (>= 0.9.1)
     rack-protection (1.5.0)
       rack
     raindrops (0.10.0)
@@ -27,8 +30,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  autoforme
   rack
-  rack-contrib
   sequel (>= 4.4.0)
   sequel_pg (>= 1.6.8)
   sinatra
