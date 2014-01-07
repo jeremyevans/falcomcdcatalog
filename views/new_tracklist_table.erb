@@ -5,16 +5,8 @@ Disc: <input type="text" name="disc" size="1" /> Start: <input type="text" name=
 <%= model_select('game', @games) %>
 <input name="commit" type="submit" value="Assign to Game" /></form>
 
-<table class="tracklist table table-bordered table-striped table-condensed">
-<thead><tr>
-<th>Disc</th>
-<th>Number</th>
-<th>Name</th>
-<th>Game</th>
-<th>Arrangement of</th>
-</tr></thead>
-<tbody>
-<% @tracks.each do |track| %>
-  <tr><td><%= track.discnumber %></td><td><%= track.number %></td><td><%= link_to(track[:name], "/song/#{track[:songid]}") %></td><td><%= track[:game] %></td><td><%= track[:arrangement] %></td></tr>
-<% end %>
-</tbody></table>
+<%= Thamble.table(@tracks,
+  :table=>{:class=>'tracklist table table-bordered table-striped table-condensed'},
+  :headers=>'Disc,Number,Name,Game,Arrangement of') do |track, t|
+  [track.discnumber, track.number, t.raw(link_to(track[:name], "/song/#{track[:songid]}")), track[:game], track[:arrangement]]
+end %>

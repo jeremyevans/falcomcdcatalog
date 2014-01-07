@@ -20,6 +20,8 @@ GEM
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
+    thamble (1.0.0)
+      rack
     tilt (1.4.1)
     unicorn (4.7.0)
       kgio (~> 2.6)
@@ -35,4 +37,5 @@ DEPENDENCIES
   sequel (>= 4.4.0)
   sequel_pg (>= 1.6.8)
   sinatra
+  thamble
   unicorn

@@ -9,8 +9,4 @@
 
 <p><%= link_to('English and Romaji Lyrics', "/lyric/#{@lyric.id}") %></p>
 
-<table class="lyric"><tbody>
-<% @lyric.japanese_verses.each do |verse| %>
-	<tr><td><%= verse.verse %></td></tr>
-<% end %>
-</tbody><table>
+<%= Thamble.table(@lyric.japanese_verses, :table=>{:class=>'lyric'}){|verse, t| [t.raw(verse.verse)]} %>

@@ -5,6 +5,7 @@ require 'erb'
 require 'sinatra/base'
 require 'cgi'
 require 'models'
+require 'thamble'
 
 # Disable caching in tilt in admin/development mode
 if ADMIN
