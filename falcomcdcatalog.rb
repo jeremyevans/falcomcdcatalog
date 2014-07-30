@@ -2,25 +2,21 @@
 #encoding: utf-8
 require 'rubygems'
 require 'erb'
-require 'sinatra/base'
-require 'cgi'
+require 'roda'
 require 'models'
 require 'thamble'
-
-# Disable caching in tilt in admin/development mode
-if ADMIN
-  class Tilt::Cache
-    def fetch(*)
-      yield
-    end
-  end
-end
+require 'autoforme'
+require 'rack/protection'
 
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
-class FalcomController < Sinatra::Base
-  enable :static
-  set(:appfile=>'falcomcdcatalog.rb', :default_encoding=>'UTF-8')
+class FalcomController < Roda
+  use Rack::Protection, :except=>[:remote_token, :session_hijacking]
+
+  use Rack::Static, :urls=>%w'/archive /favicon.ico /images /javascripts /stylesheets', :root=>'public'
+  if ADMIN
+    use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
+  end
 
   def admin?
     ADMIN
@@ -41,7 +37,7 @@ class FalcomController < Sinatra::Base
       end
       @groups[-1][1] << [category, album]
     end
-    erb :albums_by_category
+    view :albums_by_category
   end
 
   def content_tag(tag, content)
@@ -52,10 +48,6 @@ class FalcomController < Sinatra::Base
     "#{link_to(date.year, "/albums_by_date/#{date.year}")}-#{'%02i' % date.month }-#{'%02i' % date.day}"
   end
   
-  def h(text)
-    CGI.escapeHTML(text.to_s)
-  end
-
   def html_opts(hash)
     hash.map{|k,v| "#{k}=\"#{h(v)}\""}.join(' ')
   end
@@ -86,196 +78,28 @@ class FalcomController < Sinatra::Base
     text.gsub(/<i>(.*?)<\/i>/m, '\1')
   end
 
-  error do
-    e = request.env['sinatra.error']
-    puts e.message
-    e.backtrace.each{|x| puts x}
-    render(:erb, "<h3>Oops, an error occurred.</h3>")
-  end
-
-  not_found do
-    render(:erb, "<h3>The page you are looking for does not exist.</h3>")
-  end
-
-  get "/" do
-    erb :index
-  end
-
-  get %r{\A/(feedback|index|news|info|order)\z} do
-    erb params[:captures][0].to_sym
-  end
-
-  get "/album/:id" do
-    i = params[:id].to_i
-    @album = Album[i]
-    @discs = []
-    @albuminfos = {}
-    @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
-    @album.tracks.each do |track|
-      @discs[track.discnumber-1][:tracks].push track
-    end
-    @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
-    @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher).all
-    erb :album
-  end
-
-  get "/albums_by_date/?:id?" do
-    year = params[:id].to_i if params[:id]
-    @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
-    @albums = Medium.find_albums_by_date(year)
-    albums_by_category
-  end
-
-  get "/albums_by_media_type/?:id?" do
-    mediatype = params[:id].to_i if params[:id]
-    @albums = Medium.find_albums_by_mediatype(mediatype)
-    @pagetitle = if !(mediatype and @albums.length > 0)
-        'Albums By Media Type'
-    else "Albums in #{@albums[0][2]} format"
-    end
-    albums_by_category
-  end
-
-  get "/albums_by_name/?:id?" do
-    initial = params[:id][0...1] if params[:id]
-    @albums = Album.group_all_by_sortname(initial)
-    @pagetitle = if !(initial and @albums.length > 0)
-        'Albums By Name'
-    else "Albums Starting with #{initial}"
-    end
-    albums_by_category
-  end
-  
-  get "/albums_by_price/?:id?" do
-    price = params[:id].to_i if params[:id]
-    @pagetitle = case price
-      when nil then 'Albums By Price'
-      when 0 then 'Albums Not for Sale'
-      else "Albums Costing #{price} Yen"
-    end
-    @albums = Medium.find_albums_by_price(price)
-    albums_by_category
-  end
-
-  get "/artists" do
-    @artists = Artist.order(:name).all
-    erb :artists
-  end
-  
-  get "/artist/:id" do
-    @artist = Artist[params[:id].to_i]
-    erb :artist
-  end
-  
-  get "/game/:id" do
-    @game = Game[params[:id].to_i]
-    erb :game
-  end
-  
-  get "/games" do
-    @games = Game.order(:name)
-    erb :games
-  end
-
-  get "/japanese_lyric/:id" do
-    @lyric = Lyric[params[:id].to_i]
-    erb :japanese_lyric
-  end
-
-  get "/lyric/:id" do
-    @lyric = Lyric[params[:id].to_i]
-    erb :lyric
-  end
-  
-  get "/photoboard" do
-    @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM{}}
-    erb :photoboard
-  end
-
-  get "/publisher/:id?" do
-    @publisher = Publisher[params[:id].to_i]
-    erb :publisher
-  end
-  
-  get "/publishers" do
-    @publishers = Publisher.order(:name)
-    erb :publishers
-  end
-  
-  get "/random_album" do
-    redirect "/album/#{(rand(Album.count)+1)}"
-  end
-  
-  get "/random_lyric" do
-    redirect "/lyric/#{(rand(Lyric.count)+1)}"
-  end
-  
-  get "/random_song" do
-    redirect "/song/#{(rand(Song.count)+1)}"
-  end
- 
-  get "/series/:id" do 
-    i = params[:id].to_i
-    @series = Series.eager_graph(:albums).order(:albums__fullname).filter(:series__id=>i).all.first
-    @games = Game.eager_graph(:albums).order(:games__name, :albums__fullname).filter(:games__seriesid=>i).all
-    erb :series
-  end
-  
-  get "/series_list" do
-    @series = Series.order(:name)
-    erb :series_list
-  end
-  
-  get "/song/:id?" do
-    i = params[:id].to_i
-    @song = Song[i]
-    erb :song
-  end
-  
-  get "/song_search_results" do
-    @songs = Song.filter(Sequel.ilike(:name, "%#{params[:songname]}%")).order(:name).all
-    erb :song_search_results
-  end
-  
+  plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8'
+  plugin :h
   if ADMIN
-    require 'sinatra/flash'
-    register Sinatra::Flash
- 
-    get "/new_tracklist/:id" do
-      @album = Album[params[:id].to_i]
-      redirect_to("/album/#{@album.id}")if @album.tracks.length > 0
-      erb :new_tracklist
-    end
-  
-    post "/create_tracklist/:id" do
-      album = Album[params[:id].to_i]
-      album.create_tracklist(params[:tracklist])
-      redirect "/album/#{album.id}" 
-    end
+    plugin :flash
+  end
+  plugin :indifferent_params
 
-    get "/new_tracklist_table/:id" do
-      @album = Album[params[:id].to_i]
-      @games = Game.order(:name)
-      @tracks = @album.tracks_dataset.
-        select(:tracks__discnumber, :tracks__number, :tracks__songid, :songs__name, :games__name___game, :arrangements__name___arrangement).
-        left_join(:songs, :id=>:songid).
-        left_join(:games, :id=>:gameid).
-        left_join(:songs___arrangements, :id=>:songs__arrangementof).
-        order(:tracks__discnumber, :tracks__number)
-      erb :new_tracklist_table
-    end
-  
-    post "/update_tracklist_game/:id" do
-      Album[params[:id].to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
-      redirect "/new_tracklist_table/#{params[:id]}"
-    end
-  
-    require 'autoforme'
+  plugin :error_handler do |e|
+    $stderr.puts e.message
+    e.backtrace.each{|x| $stderr.puts x}
+    view(:inline=>"<h3>Oops, an error occurred.</h3>")
+  end
+
+  plugin :not_found do
+    view(:inline=>"<h3>The page you are looking for does not exist.</h3>")
+  end
+
+  if ADMIN
     Forme.register_config(:mine, :base=>:default, :labeler=>:explicit, :wrapper=>:div)
     Forme.default_config = :mine
 
-    AutoForme.for(:sinatra, self) do
-      model_type :sequel
+    plugin :autoforme do
       inline_mtm_associations :all
       association_links :all
 
@@ -330,6 +154,189 @@ class FalcomController < Sinatra::Base
         columns [:name, :game, :lyric, :arrangement]
         autocomplete_options :limit=>15
         display_name{|obj| obj.name[0..50]}
+      end
+    end
+  end
+
+  route do |r|
+    r.get do 
+      r.is "" do
+        view :index
+      end
+
+      r.is %w'feedback index news info order' do |page|
+        view page
+      end
+
+      r.is "album/:id" do |id|
+        i = id.to_i
+        @album = Album[i]
+        @discs = []
+        @albuminfos = {}
+        @album.discnames.length > 0 ? (@album.discnames.each{ |disc| @discs.push({:name=>disc.name, :tracks=>[], :id=>disc.id}) }) : @discs.push({:tracks=>[]})
+        @album.tracks.each do |track|
+          @discs[track.discnumber-1][:tracks].push track
+        end
+        @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
+        @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher).all
+        view :album
+      end
+
+      r.is /albums_by_date(?:\/(\d+))?/ do |year|
+        year = year.to_i if year
+        @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
+        @albums = Medium.find_albums_by_date(year)
+        albums_by_category
+      end
+
+      r.is /albums_by_media_type(?:\/(\d+))?/ do |mediatype|
+        @albums = Medium.find_albums_by_mediatype(mediatype)
+        @pagetitle = if !(mediatype and @albums.length > 0)
+          'Albums By Media Type'
+        else
+          "Albums in #{@albums[0][2]} format"
+        end
+        albums_by_category
+      end
+
+      r.is /albums_by_name(?:\/(\w))?/ do |initial|
+        @albums = Album.group_all_by_sortname(initial)
+        @pagetitle = if !(initial and @albums.length > 0)
+          'Albums By Name'
+        else
+          "Albums Starting with #{initial}"
+        end
+        albums_by_category
+      end
+      
+      r.is /albums_by_price(?:\/(\d+))?/ do |price|
+        price = price.to_i if price
+        @pagetitle = case price
+        when nil
+          'Albums By Price'
+        when 0
+          'Albums Not for Sale'
+        else
+          "Albums Costing #{price} Yen"
+        end
+        @albums = Medium.find_albums_by_price(price)
+        albums_by_category
+      end
+
+      r.is "artists" do
+        @artists = Artist.order(:name).all
+        view :artists
+      end
+      
+      r.is "artist/:id" do |id|
+        @artist = Artist[id.to_i]
+        view :artist
+      end
+      
+      r.is "game/:id" do |id|
+        @game = Game[id.to_i]
+        view :game
+      end
+      
+      r.is "games" do
+        @games = Game.order(:name)
+        view :games
+      end
+
+      r.is "japanese_lyric/:id" do |id|
+        @lyric = Lyric[id.to_i]
+        view :japanese_lyric
+      end
+
+      r.is "lyric/:id" do |id|
+        @lyric = Lyric[id.to_i]
+        view :lyric
+      end
+      
+      r.is "photoboard" do
+        @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM{}}
+        view :photoboard
+      end
+
+      r.is "publisher/:id" do |id|
+        @publisher = Publisher[id.to_i]
+        view :publisher
+      end
+      
+      r.is "publishers" do |id|
+        @publishers = Publisher.order(:name)
+        view :publishers
+      end
+      
+      r.is "random_album" do
+        r.redirect "/album/#{(rand(Album.count)+1)}"
+      end
+      
+      r.is "random_lyric" do
+        r.redirect "/lyric/#{(rand(Lyric.count)+1)}"
+      end
+      
+      r.is "random_song" do
+        r.redirect "/song/#{(rand(Song.count)+1)}"
+      end
+     
+      r.is "series/:id" do |id|
+        i = id.to_i
+        @series = Series.eager_graph(:albums).order(:albums__fullname).filter(:series__id=>i).all.first
+        @games = Game.eager_graph(:albums).order(:games__name, :albums__fullname).filter(:games__seriesid=>i).all
+        view :series
+      end
+      
+      r.is "series_list" do
+        @series = Series.order(:name)
+        view :series_list
+      end
+      
+      r.is "song/:id" do |id|
+        @song = Song[id.to_i]
+        view :song
+      end
+      
+      r.is "song_search_results", :param=>"songname" do |songname|
+        @songs = Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
+        view :song_search_results
+      end
+      
+      if ADMIN
+        r.is "new_tracklist/:id" do |id|
+          @album = Album[id.to_i]
+          r.redirect("/album/#{@album.id}")if @album.tracks.length > 0
+          view :new_tracklist
+        end
+      
+        r.is "new_tracklist_table/:id" do |id|
+          @album = Album[id.to_i]
+          @games = Game.order(:name)
+          @tracks = @album.tracks_dataset.
+            select(:tracks__discnumber, :tracks__number, :tracks__songid, :song__name, :game__name___game, :arrangement__name___arrangement).
+            association_left_join(:song=>[:game, :arrangement]).
+            order(:tracks__discnumber, :tracks__number)
+          view :new_tracklist_table
+        end
+
+        autoforme
+      end
+    end
+      
+    if ADMIN
+      r.post do
+        r.is "create_tracklist/:id" do |id|
+          album = Album[id.to_i]
+          album.create_tracklist(params[:tracklist])
+          redirect "/album/#{album.id}" 
+        end
+
+        r.is "update_tracklist_game/:id" do |id|
+          Album[id.to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
+          r.redirect "/new_tracklist_table/#{params[:id]}"
+        end
+
+        autoforme
       end
     end
   end
