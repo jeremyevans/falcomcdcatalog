@@ -5,10 +5,10 @@ $: << File.dirname(__FILE__)
 $:.unshift('/data/code/sequel/lib')
 require 'sequel/no_core_ext'
 Sequel.extension :blank, :pg_array_ops, :pg_row_ops
-Sequel::Model.plugin :table_select
+Sequel::Model.plugin :column_select
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
-DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///fcc?user=postgres')
+DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///?user=fcc&password=xXxXxXxXxXx')
 DB.extension(:pg_array, :pg_row)
 DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 ADMIN = !ENV['DATABASE_URL']

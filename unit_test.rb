@@ -1,6 +1,6 @@
 #!/usr/local/bin/spec
 $: << File.dirname(__FILE__)
-ENV['DATABASE_URL'] = 'postgres:///fcc_test?user=postgres'
+ENV['DATABASE_URL'] = 'postgres:///fcc_test?user=fcc&password=xXxXxXxXxXx'
 require 'models'
 [:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 
