@@ -4,7 +4,7 @@ class Artist < Sequel::Model
       ids = h.keys
       records = eo[:rows]
       records.each{|r| r.associations[:songs] = []}
-      Song.select_all(:songs).select_more(:lyricsongs__composer_id, :lyricsongs__arranger_id, :lyricsongs__vocalist_id, :lyricsongs__lyricist_id).join(Lyric, :id=>:lyricid){Sequel.or(:composer_id=>ids, :arranger_id=>ids, :vocalist_id=>ids, :lyricist_id=>ids)}.order(:songs__name).all do |song|
+      Song.select_all(:songs).select_more(:lyricsongs__composer_id, :lyricsongs__arranger_id, :lyricsongs__vocalist_id, :lyricsongs__lyricist_id).join(Lyric, {:id=>:lyricid}, :table_alias=>:lyricsongs){Sequel.or(:composer_id=>ids, :arranger_id=>ids, :vocalist_id=>ids, :lyricist_id=>ids)}.order(:songs__name).all do |song|
         [:composer_id, :arranger_id, :vocalist_id, :lyricist_id].each do |x|
           recs = h[song.values.delete(x)]
           recs.each{|r| r.associations[:songs] << song} if recs
