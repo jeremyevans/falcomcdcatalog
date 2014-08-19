@@ -1,19 +1,19 @@
-<% @pagetitle = "#{@series.name} Albums" %> <%= link_to("(Edit)", "/Series/edit/#{@series.id}") if admin?  %>
+<% @pagetitle = "#{@series.name} Albums" %> <%== link_to("(Edit)", "/Series/edit/#{@series.id}") if admin?  %>
 
 <% @games.each do |game| next if game.albums.length == 0 %>
-  <h2><%= link_to(game.name, "/game/#{game.id}") %></h2>
+  <h2><%== link_to(game.name, "/game/#{game.id}") %></h2>
   <ul>
   <% game.albums.each do |album| %>
-      <li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
+      <li><%== link_to(h(album.fullname), "/album/#{album.id}") %></li>
   <% end %>
   </ul>
 <% end %>
 
 <% if @series.albums.length > 0 %>
-  <%= "<h2>Other</h2>" if @games.length > 0 %>
+  <%== "<h2>Other</h2>" if @games.length > 0 %>
   <ul>
   <% @series.albums.each do |album| %>
-      <li><%= link_to(album.fullname, "/album/#{album.id}") %></li>
+      <li><%== link_to(h(album.fullname), "/album/#{album.id}") %></li>
   <% end %>
   </ul>
 <% end %>

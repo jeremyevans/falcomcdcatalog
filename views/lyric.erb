@@ -1,17 +1,17 @@
 <% @pagetitle = @lyric.title %> 
-<%= "<br /><i>#{@lyric.rsongname}</i>" if @lyric.rsongname != @lyric.song.name %>
+<%== "<br /><i>#{@lyric.rsongname}</i>" if @lyric.rsongname != @lyric.song.name %>
 </h1>
 
 <p>
-<%= "Music: #{link_to(@lyric.composer.name, '/artist/%s' % @lyric.composer.id)}<br />" if @lyric.composer %>
-<%= "Arrangement: #{link_to(@lyric.arranger.name, '/artist/%s' % @lyric.arranger.id)}<br />" if @lyric.arranger %>
-<%= "Lyric: #{link_to(@lyric.lyricist.name, '/artist/%s' % @lyric.lyricist.id)}<br />" if @lyric.lyricist %>
-<%= "Vocal: #{link_to(@lyric.vocalist.name, '/artist/%s' % @lyric.vocalist.id)}<br />" if @lyric.vocalist %>
+<%== "Music: #{link_to(@lyric.composer.name, '/artist/%s' % @lyric.composer.id)}<br />" if @lyric.composer %>
+<%== "Arrangement: #{link_to(@lyric.arranger.name, '/artist/%s' % @lyric.arranger.id)}<br />" if @lyric.arranger %>
+<%== "Lyric: #{link_to(@lyric.lyricist.name, '/artist/%s' % @lyric.lyricist.id)}<br />" if @lyric.lyricist %>
+<%== "Vocal: #{link_to(@lyric.vocalist.name, '/artist/%s' % @lyric.vocalist.id)}<br />" if @lyric.vocalist %>
 </p>
 
-<%= content_tag(:p, link_to('Japanese Lyrics', "/japanese_lyric/#{@lyric.id}")) if @lyric.has_japanese_verses? %>
+<%== content_tag(:p, link_to('Japanese Lyrics', "/japanese_lyric/#{@lyric.id}")) if @lyric.has_japanese_verses? %>
 
-<%= Thamble.table(@lyric.english_verses.zip(@lyric.romaji_verses), :table=>{:class=>'lyric'}) do |(ev, rv), t|
+<%== Thamble.table(@lyric.english_verses.zip(@lyric.romaji_verses), :table=>{:class=>'lyric'}) do |(ev, rv), t|
   row = [t.raw(ev.verse)]
   row << t.raw("<i>#{rv.verse}</i>") if @lyric.has_japanese_verses?
   row

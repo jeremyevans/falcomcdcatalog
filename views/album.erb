@@ -2,44 +2,44 @@
 
 <table class="album"><tbody><tr>
 <td id="tracklist">
-<%= link_to("Add Tracklist", "/new_tracklist/#{@album.id}") if admin? and @discs[0][:tracks].length == 0 %>
+<%== link_to("Add Tracklist", "/new_tracklist/#{@album.id}") if admin? and @discs[0][:tracks].length == 0 %>
 <% @discs.each_with_index do |disc, i| i+=1 %>
   <% if disc[:name] %>
-    <h2><%= disc[:name] %> <%= link_to("(Edit)", "/Discname/edit/#{disc[:id]}") if admin? %></h2>
+    <h2><%= disc[:name] %> <%== link_to("(Edit)", "/Discname/edit/#{disc[:id]}") if admin? %></h2>
     <% end %>
-  <%= "<ol>" if ! @albuminfos[[i,1]] %>
+  <%== "<ol>" if ! @albuminfos[[i,1]] %>
   <% disc[:tracks].each_with_index do |track, j| j+=1 %>
     <% if @albuminfos[[i,j]] %>
-      <%= "</ol>" if j != 1 %>
+      <%== "</ol>" if j != 1 %>
       <% @albuminfos[[i,j]].each_with_index do |albuminfo, k| %>
-        <%= content_tag('h%i' % (k+5-@albuminfos[[i,j]].length), "#{albuminfo.info} #{link_to('(Edit)', "/Albuminfo/edit/#{albuminfo.id}") if admin?}") %>
+        <%== content_tag('h%i' % (k+5-@albuminfos[[i,j]].length), "#{albuminfo.info} #{link_to('(Edit)', "/Albuminfo/edit/#{albuminfo.id}") if admin?}") %>
       <% end %>
       <ol start='<%= j %>'>
     <% end %>
-    <li><%= song_link(track.song) %> <%= '(%s)' % link_to("Lyrics", "/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
+    <li><%== song_link(track.song) %> <%== '(%s)' % link_to("Lyrics", "/lyric/#{track.song.lyricid}") if track.song.lyricid %></li>
   <% end %>
   </ol>
 <% end %>
 </td>
 
 <td id="albuminfo">
-<%= album_img(@album, ("/images/large/#{@album.picture}" if File.exists?(File.join(PUBLIC_ROOT,'images','large',@album.picture)))) if @album.picture %>
+<%== album_img(@album, ("/images/large/#{@album.picture}" if File.exists?(File.join(PUBLIC_ROOT,'images','large',@album.picture)))) if @album.picture %>
 
 <h4>Releases</h4>
 <ul>
 <% @media.each do |media| %>
-  <li><%= link_to(media.mediatype.name, "/albums_by_media_type/#{media.mediatypeid}") %>: <%= media.catalognumber %> (<%= link_to(media.price, "/albums_by_price/#{media.priceid}") %>)<br />
-  [<%= link_to(media.publisher.name, "/publisher/#{media.publisherid}") %> <%= date_link(media.publicationdate) %>] <%= link_to("(Edit)", "/Medium/edit/#{media.id}") if admin? %></li>
+  <li><%== link_to(media.mediatype.name, "/albums_by_media_type/#{media.mediatypeid}") %>: <%= media.catalognumber %> (<%== link_to(media.price, "/albums_by_price/#{media.priceid}") %>)<br />
+  [<%== link_to(media.publisher.name, "/publisher/#{media.publisherid}") %> <%== date_link(media.publicationdate) %>] <%== link_to("(Edit)", "/Medium/edit/#{media.id}") if admin? %></li>
 <% end %>
 </ul>
 
 <% if admin? %>
 <h4>Admin</h4>
 <ul>
-<li><%= link_to("Edit Album", "/Album/edit/#{@album.id}")  %></li>
-<li><%= link_to("Add Release", "/Medium/new?Medium[albumid]=#{@album.id}")  %></li>
-<li><%= link_to("Add Album Info", "/Albuminfo/new?Albuminfo[albumid]=#{@album.id}")  %></li>
-<li><%= link_to("View Tracklist Table", "/new_tracklist_table/#{@album.id}")  %></li>
+<li><%== link_to("Edit Album", "/Album/edit/#{@album.id}")  %></li>
+<li><%== link_to("Add Release", "/Medium/new?Medium[albumid]=#{@album.id}")  %></li>
+<li><%== link_to("Add Album Info", "/Albuminfo/new?Albuminfo[albumid]=#{@album.id}")  %></li>
+<li><%== link_to("View Tracklist Table", "/new_tracklist_table/#{@album.id}")  %></li>
 </ul>
 <% end %>
 </td></tr></tbody></table>

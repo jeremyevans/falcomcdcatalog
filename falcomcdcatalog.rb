@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
 require 'rubygems'
-require 'erb'
+require 'tilt/erubis'
 require 'roda'
 require 'models'
 require 'thamble'
-require 'autoforme'
 require 'rack/protection'
 
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
@@ -37,7 +36,7 @@ class FalcomController < Roda
       end
       @groups[-1][1] << [category, album]
     end
-    view :albums_by_category
+    :albums_by_category
   end
 
   def content_tag(tag, content)
@@ -78,27 +77,24 @@ class FalcomController < Roda
     text.gsub(/<i>(.*?)<\/i>/m, '\1')
   end
 
-  plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8'
+  plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
   plugin :h
-  if ADMIN
-    plugin :flash
-  end
   plugin :indifferent_params
+  plugin :symbol_matchers
+  plugin :symbol_views
 
   plugin :error_handler do |e|
     $stderr.puts e.message
     e.backtrace.each{|x| $stderr.puts x}
-    view(:inline=>"<h3>Oops, an error occurred.</h3>")
+    view(:content=>"<h3>Oops, an error occurred.</h3>")
   end
 
   plugin :not_found do
-    view(:inline=>"<h3>The page you are looking for does not exist.</h3>")
+    view(:content=>"<h3>The page you are looking for does not exist.</h3>")
   end
 
   if ADMIN
-    Forme.register_config(:mine, :base=>:default, :labeler=>:explicit, :wrapper=>:div)
-    Forme.default_config = :mine
-
+    plugin :flash
     plugin :autoforme do
       inline_mtm_associations :all
       association_links :all
@@ -156,16 +152,19 @@ class FalcomController < Roda
         display_name{|obj| obj.name[0..50]}
       end
     end
+
+    Forme.register_config(:mine, :base=>:default, :labeler=>:explicit, :wrapper=>:div)
+    Forme.default_config = :mine
   end
 
   route do |r|
-    r.get do 
-      r.is "" do
-        view :index
-      end
+    r.root do
+      :index
+    end
 
+    r.get do 
       r.is %w'feedback index news info order' do |page|
-        view page
+        page.to_sym
       end
 
       r.is "album/:id" do |id|
@@ -179,17 +178,17 @@ class FalcomController < Roda
         end
         @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
         @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher).all
-        view :album
+        :album
       end
 
-      r.is /albums_by_date(?:\/(\d+))?/ do |year|
+      r.is 'albums_by_date:optd' do |year|
         year = year.to_i if year
         @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
         @albums = Medium.find_albums_by_date(year)
         albums_by_category
       end
 
-      r.is /albums_by_media_type(?:\/(\d+))?/ do |mediatype|
+      r.is 'albums_by_media_type:optd' do |mediatype|
         @albums = Medium.find_albums_by_mediatype(mediatype)
         @pagetitle = if !(mediatype and @albums.length > 0)
           'Albums By Media Type'
@@ -199,7 +198,7 @@ class FalcomController < Roda
         albums_by_category
       end
 
-      r.is /albums_by_name(?:\/(\w))?/ do |initial|
+      r.is 'albums_by_name:opt' do |initial|
         @albums = Album.group_all_by_sortname(initial)
         @pagetitle = if !(initial and @albums.length > 0)
           'Albums By Name'
@@ -209,7 +208,7 @@ class FalcomController < Roda
         albums_by_category
       end
       
-      r.is /albums_by_price(?:\/(\d+))?/ do |price|
+      r.is 'albums_by_price:optd' do |price|
         price = price.to_i if price
         @pagetitle = case price
         when nil
@@ -225,47 +224,47 @@ class FalcomController < Roda
 
       r.is "artists" do
         @artists = Artist.order(:name).all
-        view :artists
+        :artists
       end
       
-      r.is "artist/:id" do |id|
+      r.is "artist/:d" do |id|
         @artist = Artist[id.to_i]
-        view :artist
+        :artist
       end
       
-      r.is "game/:id" do |id|
+      r.is "game/:d" do |id|
         @game = Game[id.to_i]
-        view :game
+        :game
       end
       
       r.is "games" do
         @games = Game.order(:name)
-        view :games
+        :games
       end
 
       r.is "japanese_lyric/:id" do |id|
         @lyric = Lyric[id.to_i]
-        view :japanese_lyric
+        :japanese_lyric
       end
 
       r.is "lyric/:id" do |id|
         @lyric = Lyric[id.to_i]
-        view :lyric
+        :lyric
       end
       
       r.is "photoboard" do
         @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM{}}
-        view :photoboard
+        :photoboard
       end
 
-      r.is "publisher/:id" do |id|
+      r.is "publisher/:d" do |id|
         @publisher = Publisher[id.to_i]
-        view :publisher
+        :publisher
       end
       
       r.is "publishers" do |id|
         @publishers = Publisher.order(:name)
-        view :publishers
+        :publishers
       end
       
       r.is "random_album" do
@@ -280,43 +279,43 @@ class FalcomController < Roda
         r.redirect "/song/#{(rand(Song.count)+1)}"
       end
      
-      r.is "series/:id" do |id|
+      r.is "series/:d" do |id|
         i = id.to_i
         @series = Series.eager_graph(:albums).order(:albums__fullname).filter(:series__id=>i).all.first
         @games = Game.eager_graph(:albums).order(:games__name, :albums__fullname).filter(:games__seriesid=>i).all
-        view :series
+        :series
       end
       
       r.is "series_list" do
         @series = Series.order(:name)
-        view :series_list
+        :series_list
       end
       
-      r.is "song/:id" do |id|
+      r.is "song/:d" do |id|
         @song = Song[id.to_i]
-        view :song
+        :song
       end
       
       r.is "song_search_results", :param=>"songname" do |songname|
         @songs = Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
-        view :song_search_results
+        :song_search_results
       end
       
       if ADMIN
-        r.is "new_tracklist/:id" do |id|
+        r.is "new_tracklist/:d" do |id|
           @album = Album[id.to_i]
           r.redirect("/album/#{@album.id}")if @album.tracks.length > 0
-          view :new_tracklist
+          :new_tracklist
         end
       
-        r.is "new_tracklist_table/:id" do |id|
+        r.is "new_tracklist_table/:d" do |id|
           @album = Album[id.to_i]
           @games = Game.order(:name)
           @tracks = @album.tracks_dataset.
             select(:tracks__discnumber, :tracks__number, :tracks__songid, :song__name, :game__name___game, :arrangement__name___arrangement).
             association_left_join(:song=>[:game, :arrangement]).
             order(:tracks__discnumber, :tracks__number)
-          view :new_tracklist_table
+          :new_tracklist_table
         end
 
         autoforme
@@ -325,13 +324,13 @@ class FalcomController < Roda
       
     if ADMIN
       r.post do
-        r.is "create_tracklist/:id" do |id|
+        r.is "create_tracklist/:d" do |id|
           album = Album[id.to_i]
           album.create_tracklist(params[:tracklist])
           redirect "/album/#{album.id}" 
         end
 
-        r.is "update_tracklist_game/:id" do |id|
+        r.is "update_tracklist_game/:d" do |id|
           Album[id.to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
           r.redirect "/new_tracklist_table/#{params[:id]}"
         end

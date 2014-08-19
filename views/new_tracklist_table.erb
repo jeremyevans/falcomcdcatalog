@@ -2,10 +2,10 @@
 
 <form method="post" action="/update_tracklist_game/<%= @album.id %>">
 Disc: <input type="text" name="disc" size="1" /> Start: <input type="text" name="starttrack" size="2" /> &nbsp; End: <input type="text" name="endtrack" size="2" />
-<%= model_select('game', @games) %>
+<%== model_select('game', @games) %>
 <input name="commit" type="submit" value="Assign to Game" /></form>
 
-<%= Thamble.table(@tracks,
+<%== Thamble.table(@tracks,
   :table=>{:class=>'tracklist table table-bordered table-striped table-condensed'},
   :headers=>'Disc,Number,Name,Game,Arrangement of') do |track, t|
   [track.discnumber, track.number, t.raw(link_to(track[:name], "/song/#{track[:songid]}")), track[:game], track[:arrangement]]
