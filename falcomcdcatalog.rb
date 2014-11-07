@@ -85,7 +85,7 @@ class FalcomController < Roda
 
   plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
   plugin :assets, :css_dir=>nil, :css=>'falcomcatalog.scss', :css_opts=>{:style=>:compressed, :cache=>false},
-    :compiled_path=>nil, :compiled_css_dir=>'stylesheets', :compiled=>compiled
+    :compiled_path=>nil, :compiled_css_dir=>'stylesheets', :compiled=>compiled, :prefix=>nil
   plugin :h
   plugin :indifferent_params
   plugin :symbol_matchers
