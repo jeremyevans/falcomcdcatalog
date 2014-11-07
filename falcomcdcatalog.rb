@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'tilt/erubis'
 require 'roda'
-require 'models'
+require './models'
 require 'thamble'
 require 'rack/protection'
 
@@ -77,7 +77,15 @@ class FalcomController < Roda
     text.gsub(/<i>(.*?)<\/i>/m, '\1')
   end
 
+  COMPILED_ASSETS_FILE = 'compiled_assets.json'
+  if File.exist?(COMPILED_ASSETS_FILE)
+    require 'json'
+    compiled = JSON.parse(File.read(COMPILED_ASSETS_FILE))
+  end
+
   plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
+  plugin :assets, :css_dir=>nil, :css=>'falcomcatalog.scss', :css_opts=>{:style=>:compressed, :cache=>false},
+    :compiled_path=>nil, :compiled_css_dir=>'stylesheets', :compiled=>compiled
   plugin :h
   plugin :indifferent_params
   plugin :symbol_matchers
@@ -158,6 +166,8 @@ class FalcomController < Roda
   end
 
   route do |r|
+    r.assets if ADMIN
+
     r.root do
       :index
     end

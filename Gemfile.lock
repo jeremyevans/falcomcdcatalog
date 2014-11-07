@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/jeremyevans/roda.git
+  revision: 7055e4b7d994558addfdf471a79ce62b5740d0df
+  specs:
+    roda (1.0.0)
+      rack
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -8,10 +15,9 @@ GEM
     rack-protection (1.5.3)
       rack
     raindrops (0.10.0)
-    roda (1.0.0)
-      rack
-    sequel (4.13.0)
-    sequel_pg (1.6.10)
+    sass (3.4.7)
+    sequel (4.14.0)
+    sequel_pg (1.6.11)
       pg (>= 0.8.0)
       sequel (>= 3.39.0)
     thamble (1.0.0)
@@ -28,7 +34,8 @@ PLATFORMS
 DEPENDENCIES
   erubis
   rack-protection
-  roda (>= 1.0)
+  roda!
+  sass
   sequel (>= 4.8.0)
   sequel_pg (>= 1.6.8)
   thamble
