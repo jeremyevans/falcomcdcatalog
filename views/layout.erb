@@ -4,14 +4,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Falcom CD Catalog - English Edition<%= ' - ' + title(@pagetitle) if @pagetitle %></title>
-<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css" />
-<%== assets(:css) %>
-<script src="/javascripts/jquery.min.js" type="text/javascript"></script>
-<script src="/javascripts/bootstrap-dropdown.js" type="text/javascript"></script>
+<%== assets([:css, :public]) %>
+<%== assets([:js, :public]) %>
 <% if admin? %>
-<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.autocomplete.css" />
-<script src="/javascripts/jquery.autocomplete.js" type="text/javascript"></script>
-<script src="/javascripts/autoforme.js" type="text/javascript"></script>
+<%== assets([:css, :admin]) %>
+<%== assets([:js, :admin]) %>
 <% end %>
 </head>
 

@@ -77,15 +77,17 @@ class FalcomController < Roda
     text.gsub(/<i>(.*?)<\/i>/m, '\1')
   end
 
-  COMPILED_ASSETS_FILE = 'compiled_assets.json'
-  if File.exist?(COMPILED_ASSETS_FILE)
-    require 'json'
-    compiled = JSON.parse(File.read(COMPILED_ASSETS_FILE))
-  end
-
   plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
-  plugin :assets, :css_dir=>nil, :css=>'falcomcatalog.scss', :css_opts=>{:style=>:compressed, :cache=>false},
-    :compiled_path=>nil, :compiled_css_dir=>'stylesheets', :compiled=>compiled, :prefix=>nil
+  plugin :assets,
+    :css=>{:public=>%w'bootstrap.min.css falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
+    :js=>{:public=>%w'jquery.min.js bootstrap-dropdown.js', :admin=>%w'jquery.autocomplete.js autoforme.js'},
+    :css_opts=>{:style=>:compressed, :cache=>false},
+    :compiled_path=>nil,
+    :group_subdirs=>false,
+    :compiled_css_dir=>'stylesheets',
+    :compiled_js_dir=>'javascripts',
+    :precompiled=>'compiled_assets.json',
+    :prefix=>nil
   plugin :h
   plugin :indifferent_params
   plugin :symbol_matchers
