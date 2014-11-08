@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 
-#gem 'roda', '>= 1.1'
-gem 'roda', :git => 'https://github.com/jeremyevans/roda.git'
+gem 'roda', '>= 1.1'
 gem 'erubis'
 gem 'tilt'
 gem 'sass'
