@@ -14,23 +14,12 @@ img { border-width: 0px; }
 
 p#logofalcom { text-align: center; }
 
-table.lyric td { 
-	padding: 10px 50px 10px 0px; 
-	vertical-align: top;
+.lyric-verse { 
+  margin-top: 20px;
+  div { padding-top: 10px; }
 }
-table.tracklist {
-	border-width: 1px;
-	border-style: solid;
-	padding: 2px;
-	border-collapse: collapse; 
-  margin-top: 5px;
-}
-table.album td { vertical-align: top; }
-
-td#albuminfo { padding-left: 50px; }
-td#tracklist {
-  h3 { margin-left: 5px;}
-  h4 { margin-left: 15px;}
+.lyric-romaji {
+  font-style: italic;
 }
 
 .email { 
@@ -49,4 +38,18 @@ input, textarea, select { width: auto; }
 
 .inline_mtm_add_associations, .inline_mtm_remove_associations {
   form div input.btn {display: inline; margin: 5px;}
+}
+
+.navbar-default {
+  color: white;
+  &, .dropdown-menu, .dropdown-menu li a:hover {
+    background-color: #2c2c2c;
+  }
+  .navbar-brand, .navbar-nav > li > a, .navbar-nav .open .dropdown-menu > li > a {
+    color: white;
+    &:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  }
 }

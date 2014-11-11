@@ -11,8 +11,12 @@
 
 <%== content_tag(:p, link_to('Japanese Lyrics', "/japanese_lyric/#{@lyric.id}")) if @lyric.has_japanese_verses? %>
 
-<%== Thamble.table(@lyric.english_verses.zip(@lyric.romaji_verses), :table=>{:class=>'lyric'}) do |(ev, rv), t|
-  row = [t.raw(ev.verse)]
-  row << t.raw("<i>#{rv.verse}</i>") if @lyric.has_japanese_verses?
-  row
-end %>
+<% @lyric.english_verses.zip(@lyric.romaji_verses).each do |vs| vs.pop unless @lyric.has_japanese_verses? %>
+  <div class="row lyric-verse">
+    <% vs.each do |v| %>
+      <div class="col-xs-12 col-sm-<%= vs.length == 1 ? 12 : 6 %> <%= 'lyric-romaji' if @lyric.has_japanese_verses? && v == vs.last %>">
+        <%== v.verse %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
