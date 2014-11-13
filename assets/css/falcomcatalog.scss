@@ -46,10 +46,7 @@ input, textarea, select { width: auto; }
     background-color: #2c2c2c;
   }
   .navbar-brand, .navbar-nav > li > a, .navbar-nav .open .dropdown-menu > li > a {
-    color: white;
-    &:hover {
-      color: white;
-      text-decoration: underline;
-    }
+    &, &:hover, &:visited { color: white; }
+    &:hover { text-decoration: underline; }
   }
 }
