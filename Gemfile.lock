@@ -1,17 +1,17 @@
 GEM
-  remote: https://rubygems.org/
+  remote: https://api.rubygems.org/
   specs:
     erubis (2.7.0)
-    kgio (2.8.1)
+    kgio (2.9.2)
     pg (0.17.1)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
     raindrops (0.10.0)
-    roda (1.1.0)
+    roda (1.2.0)
       rack
-    sass (3.4.7)
-    sequel (4.14.0)
+    sass (3.4.9)
+    sequel (4.17.0)
     sequel_pg (1.6.11)
       pg (>= 0.8.0)
       sequel (>= 3.39.0)
@@ -29,7 +29,7 @@ PLATFORMS
 DEPENDENCIES
   erubis
   rack-protection
-  roda (>= 1.1)
+  roda (>= 1.2.0)
   sass
   sequel (>= 4.8.0)
   sequel_pg (>= 1.6.8)
