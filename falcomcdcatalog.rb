@@ -309,8 +309,12 @@ class FalcomController < Roda
         :song
       end
       
-      r.is "song_search_results", :param=>"songname" do |songname|
-        @songs = Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
+      r.is "song_search_results" do
+        @songs = if (songname = r['songname']) && !songname.empty?
+          Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
+        else
+          []
+        end
         :song_search_results
       end
       
