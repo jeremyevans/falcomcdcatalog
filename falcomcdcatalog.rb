@@ -92,7 +92,6 @@ class FalcomController < Roda
   plugin :indifferent_params
   plugin :symbol_matchers
   plugin :symbol_views
-  plugin :static_path_info
 
   plugin :error_handler do |e|
     $stderr.puts e.message
