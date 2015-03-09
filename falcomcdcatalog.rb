@@ -5,13 +5,11 @@ require 'tilt/erubis'
 require 'roda'
 require './models'
 require 'thamble'
-require 'rack/protection'
+require 'rack/indifferent'
 
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Roda
-  use Rack::Protection, :except=>[:remote_token, :session_hijacking]
-
   use Rack::Static, :urls=>%w'/archive /favicon.ico /images /javascripts /stylesheets', :root=>'public'
   if ADMIN
     use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
@@ -89,9 +87,10 @@ class FalcomController < Roda
     :precompiled=>'compiled_assets.json',
     :prefix=>nil
   plugin :h
-  plugin :indifferent_params
   plugin :symbol_matchers
   plugin :symbol_views
+  plugin :delegate
+  request_delegate :params
 
   plugin :error_handler do |e|
     $stderr.puts e.message
