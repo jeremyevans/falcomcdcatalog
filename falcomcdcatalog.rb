@@ -10,7 +10,7 @@ require 'rack/indifferent'
 PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
 
 class FalcomController < Roda
-  use Rack::Static, :urls=>%w'/archive /favicon.ico /images /javascripts /stylesheets', :root=>'public'
+  plugin :static, %w'/archive /favicon.ico /images /javascripts /stylesheets'
   if ADMIN
     use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
   end
