@@ -8,7 +8,7 @@ GEM
     rack-indifferent (1.1.0)
       rack (>= 1.5)
     raindrops (0.10.0)
-    roda (2.0.0)
+    roda (2.1.0)
       rack
     sass (3.4.9)
     sequel (4.20.0)
