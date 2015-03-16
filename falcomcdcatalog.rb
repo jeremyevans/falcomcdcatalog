@@ -107,6 +107,7 @@ class FalcomController < Roda
     plugin :autoforme do
       inline_mtm_associations :all
       association_links :all
+      form_options :input_defaults=>{:text=>{:size=>80}}
 
       model Album do
         order :sortname
@@ -342,12 +343,12 @@ class FalcomController < Roda
         r.is "create_tracklist/:d" do |id|
           album = Album[id.to_i]
           album.create_tracklist(params[:tracklist])
-          redirect "/album/#{album.id}" 
+          r.redirect "/album/#{album.id}" 
         end
 
         r.is "update_tracklist_game/:d" do |id|
           Album[id.to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
-          r.redirect "/new_tracklist_table/#{params[:id]}"
+          r.redirect "/new_tracklist_table/#{id}"
         end
 
         autoforme
