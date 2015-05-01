@@ -1,8 +1,8 @@
-#!/usr/local/bin/spec
 $: << File.dirname(__FILE__)
 ENV['DATABASE_URL'] = 'postgres:///fcc_test?user=fcc&password=xXxXxXxXxXx'
 require 'models'
 [:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
+require 'minitest/autorun'
 
 describe Album do
   before do
@@ -17,113 +17,113 @@ describe Album do
   end
 
   specify "associations be correct" do
-    @album.tracks.should == []
-    @album.discnames.should == []
-    @album.albuminfos.should == []
-    @album.media.should == []
-    @album.games.should == []
-    @album.series.should == []
+    @album.tracks.must_equal []
+    @album.discnames.must_equal []
+    @album.albuminfos.must_equal []
+    @album.media.must_equal []
+    @album.games.must_equal []
+    @album.series.must_equal []
   end
 
   specify ".group_all_by_sortname should give an array of arrays of nil, albums, and initals" do
-    Album.group_all_by_sortname.should == [[nil, @album2, 'O'], [nil, @album, 'T']]
+    Album.group_all_by_sortname.must_equal [[nil, @album2, 'O'], [nil, @album, 'T']]
   end
 
   specify ".group_all_by_sortname should filter by initial if given an inital" do
-    Album.group_all_by_sortname('T').should == [[nil, @album, 'T']]
+    Album.group_all_by_sortname('T').must_equal [[nil, @album, 'T']]
   end
 
   specify "#<=> should go by sortname" do
-    [@album, @album2].sort.should == [@album2, @album]
+    [@album, @album2].sort.must_equal [@album2, @album]
   end
 
   specify "#tracks_dataset should be a dataset for the album's tracks, including the album_id" do
-    @album.tracks_dataset.all.should == []
+    @album.tracks_dataset.all.must_equal []
     @album.update(:tracks=>[{:discnumber=>1, :number=>2, :songid=>1}])
-    @album.tracks_dataset.all.should == [Track.load(:albumid=>@album.id, :discnumber=>1, :number=>2, :songid=>1)]
+    @album.tracks_dataset.all.must_equal [Track.load(:albumid=>@album.id, :discnumber=>1, :number=>2, :songid=>1)]
   end
 
   specify "#tracks should be an array of the tracks with eagerly loaded songs" do
-    @album.tracks.should == []
+    @album.tracks.must_equal []
     song = Song.create(:name=>'A Song')
     @album.update(:tracks=>[{:discnumber=>1, :number=>2, :songid=>song.id}])
     tracks =  @album.tracks
-    tracks.should == [Track.load(:discnumber=>1, :number=>2, :songid=>song.id)]
-    @album.tracks.should equal(tracks)
-    tracks.first.associations[:song].should == song
+    tracks.must_equal [Track.load(:discnumber=>1, :number=>2, :songid=>song.id)]
+    @album.tracks.must_equal(tracks)
+    tracks.first.associations[:song].must_equal song
   end
 
   specify "#create_tracklist should raise an error if the album already has a tracklist" do
     @album.create_tracklist("Track1\nTrack2")
-    proc{@album.create_tracklist("Track1\nTrack2")}.should raise_error
+    proc{@album.create_tracklist("Track1\nTrack2")}.must_raise Sequel::Error
   end
 
   specify "#create_tracklist should create tracks from an input string" do
     @album.create_tracklist("Track1\nTrack2")
-    Discname.count.should == 0
+    Discname.count.must_equal 0
     songs = Song.order(:name).all
-    songs.length.should == 2
-    songs.first[:name].should == 'Track1'
-    songs.last[:name].should == 'Track2'
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
+    songs.length.must_equal 2
+    songs.first[:name].must_equal 'Track1'
+    songs.last[:name].must_equal 'Track2'
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
   end
 
   specify "#create_tracklist should create discs and tracks from an input string with blank lines" do
     @album.create_tracklist("Track1\n\nTrack2")
     discs = Discname.all
-    discs.length.should == 2
-    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
-    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    discs.length.must_equal 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).must_equal [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).must_equal [2, 'Disc 2', @album.id]
     songs = Song.order(:name).all
-    songs.length.should == 2
-    songs.first[:name].should == 'Track1'
-    songs.last[:name].should == 'Track2'
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
+    songs.length.must_equal 2
+    songs.first[:name].must_equal 'Track1'
+    songs.last[:name].must_equal 'Track2'
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
   end
 
   specify "#create_tracklist should use existing songs instead of creating new ones" do
     s1 = Song.create(:name=>'Track1')
     s2 = Song.create(:name=>'Track2')
     @album.create_tracklist("Track1\nTrack2")
-    songs = Song.order(:name).all.should == [s1, s2]
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>s1.id), Track.load(:discnumber=>1, :number=>2, :songid=>s2.id)]
+    songs = Song.order(:name).all.must_equal [s1, s2]
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>s1.id), Track.load(:discnumber=>1, :number=>2, :songid=>s2.id)]
   end
 
   specify "#create_tracklist should escape & and \"" do
     @album.create_tracklist("Tr&ck1\nTr\"ck2")
-    Discname.count.should == 0
+    Discname.count.must_equal 0
     songs = Song.order(:name).all
-    songs.length.should == 2
-    songs.first[:name].should == 'Tr&amp;ck1'
-    songs.last[:name].should == 'Tr&quot;ck2'
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
+    songs.length.must_equal 2
+    songs.first[:name].must_equal 'Tr&amp;ck1'
+    songs.last[:name].must_equal 'Tr&quot;ck2'
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>1, :number=>2, :songid=>songs.last.id)]
   end
 
   specify "#create_tracklist should handle CRLF" do
     @album.create_tracklist("Track1\r\nTrack2\r\n\r\nTrack3")
     discs = Discname.all
-    discs.length.should == 2
-    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
-    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    discs.length.must_equal 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).must_equal [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).must_equal [2, 'Disc 2', @album.id]
     songs = Song.order(:name).all
-    songs.length.should == 3
-    songs[0][:name].should == 'Track1'
-    songs[1][:name].should == 'Track2'
-    songs[2][:name].should == 'Track3'
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs[0].id), Track.load(:discnumber=>1, :number=>2, :songid=>songs[1].id), Track.load(:discnumber=>2, :number=>1, :songid=>songs[2].id)]
+    songs.length.must_equal 3
+    songs[0][:name].must_equal 'Track1'
+    songs[1][:name].must_equal 'Track2'
+    songs[2][:name].must_equal 'Track3'
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>songs[0].id), Track.load(:discnumber=>1, :number=>2, :songid=>songs[1].id), Track.load(:discnumber=>2, :number=>1, :songid=>songs[2].id)]
   end
 
   specify "#create_tracklist should an arbitrary number of blank lines" do
     @album.create_tracklist("Track1\n\n\n\nTrack2")
     discs = Discname.all
-    discs.length.should == 2
-    discs.first.to_hash.values_at(:number, :name, :albumid).should == [1, 'Disc 1', @album.id]
-    discs.last.to_hash.values_at(:number, :name, :albumid).should == [2, 'Disc 2', @album.id]
+    discs.length.must_equal 2
+    discs.first.to_hash.values_at(:number, :name, :albumid).must_equal [1, 'Disc 1', @album.id]
+    discs.last.to_hash.values_at(:number, :name, :albumid).must_equal [2, 'Disc 2', @album.id]
     songs = Song.order(:name).all
-    songs.length.should == 2
-    songs.first[:name].should == 'Track1'
-    songs.last[:name].should == 'Track2'
-    @album.refresh.tracks.should == [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
+    songs.length.must_equal 2
+    songs.first[:name].must_equal 'Track1'
+    songs.last[:name].must_equal 'Track2'
+    @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>songs.first.id), Track.load(:discnumber=>2, :number=>1, :songid=>songs.last.id)]
   end
 
   specify "#update_tracklist_game should update the game for the songs in the given range in the tracklist" do
@@ -133,18 +133,18 @@ describe Album do
 
     g = Game.create(:name=>'Game')
     @album.update_tracklist_game(1, 1, 1, g.id)
-    s1.refresh.gameid.should == g.id
-    s2.refresh.gameid.should == nil
+    s1.refresh.gameid.must_equal g.id
+    s2.refresh.gameid.must_equal nil
 
     g2 = Game.create(:name=>'Game')
     @album.update_tracklist_game(1, 2, 2, g2.id)
-    s1.refresh.gameid.should == g.id
-    s2.refresh.gameid.should == g2.id
+    s1.refresh.gameid.must_equal g.id
+    s2.refresh.gameid.must_equal g2.id
 
     g3 = Game.create(:name=>'Game')
     @album.update_tracklist_game(1, 1, 2, g3.id)
-    s1.refresh.gameid.should == g3.id
-    s2.refresh.gameid.should == g3.id
+    s1.refresh.gameid.must_equal g3.id
+    s2.refresh.gameid.must_equal g3.id
   end
 end
 
@@ -157,7 +157,7 @@ describe Albuminfo do
   end
 
   specify "associations be correct" do
-    @info.album.should == nil
+    @info.album.must_equal nil
   end
 end
 
@@ -178,8 +178,8 @@ describe Artist do
     song2 = Song.create(:name=>'Z', :lyricid=>lyric2.id)
     lyric3 = Lyric.create(:lyricist_id=>@artist.id)
     song3 = Song.create(:name=>'Y', :lyricid=>lyric3.id)
-    @artist.songs.should == [song3, song2]
-    Artist.eager(:songs).all.first.songs.should == [song3, song2]
+    @artist.songs.must_equal [song3, song2]
+    Artist.eager(:songs).all.first.songs.must_equal [song3, song2]
   end
 end
 
@@ -192,7 +192,7 @@ describe Discname do
   end
 
   specify "associations be correct" do
-    @disc.album.should == nil
+    @disc.album.must_equal nil
   end
 end
 
@@ -205,9 +205,9 @@ describe Game do
   end
 
   specify "associations be correct" do
-    @game.series.should == nil
-    @game.songs.should == []
-    @game.albums.should == []
+    @game.series.must_equal nil
+    @game.songs.must_equal []
+    @game.albums.must_equal []
   end
 end
 
@@ -223,49 +223,49 @@ describe Lyric do
   end
 
   specify "associations be correct" do
-    @lyric.song.should == nil
-    @lyric.lyric_verses.should == []
-    @lyric.english_verses.should == []
-    @lyric.romaji_verses.should == []
-    @lyric.japanese_verses.should == []
-    @lyric.composer.should == nil
-    @lyric.arranger.should == nil
-    @lyric.vocalist.should == nil
-    @lyric.lyricist.should == nil
+    @lyric.song.must_equal nil
+    @lyric.lyric_verses.must_equal []
+    @lyric.english_verses.must_equal []
+    @lyric.romaji_verses.must_equal []
+    @lyric.japanese_verses.must_equal []
+    @lyric.composer.must_equal nil
+    @lyric.arranger.must_equal nil
+    @lyric.vocalist.must_equal nil
+    @lyric.lyricist.must_equal nil
   end
 
   specify "#has_japanese_verses? should return whether there are any japanese verses" do
-    @lyric.has_japanese_verses?.should == false
+    @lyric.has_japanese_verses?.must_equal false
     LyricVerse.create(:lyricsongid=>@lyric.id, :languageid=>3)
     @lyric.refresh
-    @lyric.has_japanese_verses?.should == true
+    @lyric.has_japanese_verses?.must_equal true
   end
 
   specify "#japanese_title should be the songs japanese title, game, and original name" do
     @lyric.jsongname = 'X'
     @lyric.song = Song.create(:name=>'X')
     if RUBY_VERSION >= '1.9'
-      @lyric.japanese_title.should == "X \uFF08\u300C\u300D\uFF09"
+      @lyric.japanese_title.must_equal "X \uFF08\u300C\u300D\uFF09"
       @lyric.joriginalsongname = 'Y'
-      @lyric.japanese_title.should == "X \uFF08\u300CY\u300D\uFF09"
+      @lyric.japanese_title.must_equal "X \uFF08\u300CY\u300D\uFF09"
       @lyric.song.game = Game.create(:jname=>'Z')
-      @lyric.japanese_title.should == "X \uFF08Z\u300CY\u300D\uFF09"
+      @lyric.japanese_title.must_equal "X \uFF08Z\u300CY\u300D\uFF09"
     else
-      @lyric.japanese_title.should == "X \357\274\210\343\200\214\343\200\215\357\274\211"
+      @lyric.japanese_title.must_equal "X \357\274\210\343\200\214\343\200\215\357\274\211"
       @lyric.joriginalsongname = 'Y'
-      @lyric.japanese_title.should == "X \357\274\210\343\200\214Y\343\200\215\357\274\211"
+      @lyric.japanese_title.must_equal "X \357\274\210\343\200\214Y\343\200\215\357\274\211"
       @lyric.song.game = Game.create(:jname=>'Z')
-      @lyric.japanese_title.should == "X \357\274\210Z\343\200\214Y\343\200\215\357\274\211"
+      @lyric.japanese_title.must_equal "X \357\274\210Z\343\200\214Y\343\200\215\357\274\211"
     end
   end
   
   specify "#title should be the songs title, game, and original name" do
     @lyric.song = Song.create(:name=>'X')
-    @lyric.title.should == 'X ()'
+    @lyric.title.must_equal 'X ()'
     @lyric.song.game = Game.create(:name=>'Z')
-    @lyric.title.should == 'X (Z)'
+    @lyric.title.must_equal 'X (Z)'
     @lyric.song.arrangement = Song.create(:name=>'T')
-    @lyric.title.should == 'X (Z - T)'
+    @lyric.title.must_equal 'X (Z - T)'
   end
 end
 
@@ -278,7 +278,7 @@ describe LyricVerse do
   end
 
   specify "associations be correct" do
-    @verse.lyric.should == nil
+    @verse.lyric.must_equal nil
   end
 end
 
@@ -291,7 +291,7 @@ describe Mediatype do
   end
 
   specify "associations be correct" do
-    @mtype.media.should == []
+    @mtype.media.must_equal []
   end
 end
 
@@ -311,47 +311,47 @@ describe Medium do
   end
 
   specify "associations be correct" do
-    @medium.album.should == @album
-    @medium.mediatype.should == @mtype
-    @medium.publisher.should == nil
+    @medium.album.must_equal @album
+    @medium.mediatype.must_equal @mtype
+    @medium.publisher.must_equal nil
   end
 
   specify ".find_albums_by_date should return an array of arrays of date, album, and year" do
-    Medium.find_albums_by_date.should == [[Date.parse('2000-11-23'), @album2, 2000], [Date.parse('1999-10-31'), @album, 1999]]
+    Medium.find_albums_by_date.must_equal [[Date.parse('2000-11-23'), @album2, 2000], [Date.parse('1999-10-31'), @album, 1999]]
   end
 
   specify ".find_albums_by_date should filter to the given year if provided " do
-    Medium.find_albums_by_date(2000).should == [[Date.parse('2000-11-23'), @album2, 2000]]
+    Medium.find_albums_by_date(2000).must_equal [[Date.parse('2000-11-23'), @album2, 2000]]
   end
 
   specify ".find_albums_by_mediatype should return an array of arrays of nil, album, and mediatype name" do
-    Medium.find_albums_by_mediatype.should == [[nil, @album, 'CD'], [nil, @album2, 'DVD']]
+    Medium.find_albums_by_mediatype.must_equal [[nil, @album, 'CD'], [nil, @album2, 'DVD']]
   end
 
   specify ".find_albums_by_mediatype should filter to the given mediatype if provided" do
-    Medium.find_albums_by_mediatype(@mtype.id).should == [[nil, @album, 'CD']]
+    Medium.find_albums_by_mediatype(@mtype.id).must_equal [[nil, @album, 'CD']]
   end
 
   specify ".find_albums_by_price should return an array of arrays of nil, album, and price" do
-    Medium.find_albums_by_price.should == [[nil, @album2, 'Not for Sale'], [nil, @album, '900 Yen']]
+    Medium.find_albums_by_price.must_equal [[nil, @album2, 'Not for Sale'], [nil, @album, '900 Yen']]
   end
 
   specify ".find_albums_by_price should filter to the given price if provided" do
-    Medium.find_albums_by_price(900).should == [[nil, @album, '900 Yen']]
+    Medium.find_albums_by_price(900).must_equal [[nil, @album, '900 Yen']]
   end
 
   specify ".find_albums_by_price should filter for nil price if given a 0" do
-    Medium.find_albums_by_price(0).should == [[nil, @album2, 'Not for Sale']]
+    Medium.find_albums_by_price(0).must_equal [[nil, @album2, 'Not for Sale']]
   end
 
   specify "#price should be a string giving the price" do
-    @medium.price.should == '900 Yen'
-    @medium2.price.should == 'Not for Sale'
+    @medium.price.must_equal '900 Yen'
+    @medium2.price.must_equal 'Not for Sale'
   end
 
   specify "#priceid should be a number giving the price, or 0 for nil price" do
-    @medium.priceid.should == 900
-    @medium2.priceid.should == 0
+    @medium.priceid.must_equal 900
+    @medium2.priceid.must_equal 0
   end
 end
 
@@ -368,9 +368,9 @@ describe Publisher do
   end
 
   specify "associations be correct" do
-    @pub.media.should == [@medium]
-    @pub.albums.should == [@album]
-    Publisher.eager(:albums).all.first.albums.should == [@album]
+    @pub.media.must_equal [@medium]
+    @pub.albums.must_equal [@album]
+    Publisher.eager(:albums).all.first.albums.must_equal [@album]
   end
 end
 
@@ -383,8 +383,8 @@ describe Series do
   end
 
   specify "associations be correct" do
-    @series.albums.should == []
-    @series.games.should == []
+    @series.albums.must_equal []
+    @series.games.must_equal []
   end
 end
 
@@ -398,18 +398,18 @@ describe Song do
   end
 
   specify "associations be correct" do
-    @song.arrangements.should == []
-    @song.game.should == nil
-    @song.lyric.should == nil
-    @song.arrangement.should == nil
+    @song.arrangements.must_equal []
+    @song.game.must_equal nil
+    @song.lyric.must_equal nil
+    @song.arrangement.must_equal nil
   end
 
   specify "#tracks should be an array of tracks associated to the song, with an associated album" do
-    @song.tracks.should == []
+    @song.tracks.must_equal []
     album = Album.create(:fullname=>'A')
     album.create_tracklist("S")
-    album.tracks.first.song.should == @song
-    Song.first.tracks.should == album.tracks
+    album.tracks.first.song.must_equal @song
+    Song.first.tracks.must_equal album.tracks
   end
 end
 
@@ -426,13 +426,13 @@ describe Track do
   end
 
   specify "associations be correct" do
-    @track.song(true).should == @song
+    @track.song(true).must_equal @song
   end
 
   specify "#album_and_number should give the album, number, and discnumber (if numdiscs is > 1)" do
     @track.album = @album
-    @track.album_and_number.should == 'Blah, Disc 2, Track 10'
+    @track.album_and_number.must_equal 'Blah, Disc 2, Track 10'
     @track.album.numdiscs = 1
-    @track.album_and_number.should == 'Blah, Track 10'
+    @track.album_and_number.must_equal 'Blah, Track 10'
   end
 end
