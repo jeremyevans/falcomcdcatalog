@@ -3,14 +3,15 @@
 require 'rubygems'
 require 'tilt/erubis'
 require 'roda'
-require './models'
+require File.expand_path('../models', __FILE__)
 require 'thamble'
 require 'rack/indifferent'
 
-PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
-
 module Falcom
   class App < Roda
+    PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
+    opts[:root] = File.dirname(__FILE__)
+
     plugin :static, %w'/archive /favicon.ico /images /javascripts /stylesheets'
     if ADMIN
       use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)

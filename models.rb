@@ -1,8 +1,8 @@
 Encoding.default_internal = Encoding.default_external = 'UTF-8' if RUBY_VERSION >= '1.9'
 require 'rubygems'
 require 'logger'
-$: << File.dirname(__FILE__)
-require './.env.rb' if File.file?('./.env.rb')
+env_file = File.expand_path("../.env.rb", __FILE__)
+require env_file if File.file?(env_file)
 
 require 'sequel'
 
@@ -18,4 +18,4 @@ Falcom::DB.optimize_model_load = true if Falcom::DB.respond_to?(:optimize_model_
 ADMIN = ENV['FALCOMCDS_ADMIN']
 # Falcom::DB.logger = Logger.new($stdout)
 
-%w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require "models/#{x}"}
+%w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require File.expand_path("../models/#{x}", __FILE__)}

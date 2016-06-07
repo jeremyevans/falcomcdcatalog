@@ -1,6 +1,5 @@
-$: << File.dirname(__FILE__)
 ENV['FALCOMCDS_DATABASE_URL'] = 'postgres:///fcc_test?user=fcc'
-require 'models'
+require File.expand_path('../models', __FILE__)
 [:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| Falcom::DB[x].delete}
 require 'minitest/autorun'
 include Falcom
