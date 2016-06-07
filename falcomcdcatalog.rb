@@ -86,7 +86,7 @@ module Falcom
       :group_subdirs=>false,
       :compiled_css_dir=>'stylesheets',
       :compiled_js_dir=>'javascripts',
-      :precompiled=>'compiled_assets.json',
+      :precompiled=>File.expand_path('../compiled_assets.json', __FILE__)
       :prefix=>nil
     plugin :h
     plugin :symbol_matchers
