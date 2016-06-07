@@ -112,52 +112,64 @@ module Falcom
         form_options :input_defaults=>{:text=>{:size=>80}}
 
         model Album do
+          class_display_name 'Album'
           order :sortname
           columns [:fullname, :sortname, :picture, :numdiscs]
           display_name :fullname
         end
         model Albuminfo do
+          class_display_name 'Albuminfo'
           columns [:album, :discnumber, :starttrack, :endtrack, :info]
           display_name{|obj| "#{obj.discnumber}-#{obj.starttrack}-#{obj.endtrack}-#{obj.info}"}
         end
         model Artist do
+          class_display_name 'Artist'
           order :name
         end
         model Discname do
+          class_display_name 'Discname'
           columns [:album, :number, :name]
         end
         model Game do
+          class_display_name 'Game'
           order :name
           columns [:series, :name, :jname]
         end
         model Lyric do
+          class_display_name 'Lyric'
           columns [:rsongname, :jsongname, :joriginalsongname, :arranger, :composer, :lyricist, :vocalist]
           order :song__name
           eager_graph :song
           display_name{|obj| obj.song.name}
         end
         model LyricVerse do
+          class_display_name 'LyricVerse'
           columns [:lyric, :number, :verse, :languageid]
           order [:lyricsongid, :languageid, :number, :verse]
           display_name{|obj| "Verse #{obj.number} - #{obj.languageid != 3 ? obj.verse[0...40].gsub(/<br? ?\/?>?/, ', ') : 'Japanese text'}"}
         end
         model Mediatype do
+          class_display_name 'Mediatype'
           order :name
           columns [:name]
         end
         model Medium do
+          class_display_name 'Medium'
           columns [:album, :mediatype, :publisher, :catalognumber, :price, :publicationdate]
           display_name :catalognumber
         end
         model Publisher do
+          class_display_name 'Publisher'
           order :name
           columns [:name]
         end
         model Series do
+          class_display_name 'Series'
           order :name
           columns [:name]
         end
         model Song do
+          class_display_name 'Song'
           order :name
           columns [:name, :game, :lyric, :arrangement]
           autocomplete_options :limit=>15
