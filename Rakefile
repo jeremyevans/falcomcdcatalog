@@ -4,6 +4,6 @@ namespace :assets do
   desc "Precompile the assets"
   task :precompile do
     require './falcomcdcatalog'
-    FalcomController.compile_assets
+    Falcom::App.compile_assets
   end
 end

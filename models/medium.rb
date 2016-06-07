@@ -1,4 +1,5 @@
-class Medium < Sequel::Model
+module Falcom
+class Medium < Sequel::Model(DB)
   many_to_one :album, :key => :albumid
   many_to_one :mediatype, :key => :mediatypeid
   many_to_one :publisher, :key => :publisherid
@@ -29,6 +30,7 @@ class Medium < Sequel::Model
   def priceid
     self[:price] || 0
   end
+end
 end
 
 # Table: media

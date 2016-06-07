@@ -1,5 +1,7 @@
-class Albuminfo < Sequel::Model
+module Falcom
+class Albuminfo < Sequel::Model(DB)
   many_to_one :album, :key => :albumid
+end
 end
 
 # Table: albuminfos

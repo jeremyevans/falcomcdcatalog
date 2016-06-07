@@ -1,8 +1,9 @@
-class Song < Sequel::Model
-  one_to_many :arrangements, :class_name=>'Song', :key=>:arrangementof
+module Falcom
+class Song < Sequel::Model(DB)
+  one_to_many :arrangements, :class=>'Falcom::Song', :key=>:arrangementof
   many_to_one :game, :key=>:gameid
   many_to_one :lyric, :key=>:lyricid
-  many_to_one :arrangement, :class_name=>'Song', :key=>:arrangementof
+  many_to_one :arrangement, :class=>'Falcom::Song', :key=>:arrangementof
 
   def tracks
     return @tracks if @tracks
@@ -16,6 +17,7 @@ class Song < Sequel::Model
     end
     @tracks
   end
+end
 end
 
 # Table: songs

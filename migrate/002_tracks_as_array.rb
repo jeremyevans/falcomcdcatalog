@@ -32,11 +32,11 @@ SQL
     add_column :albums, :tracks, 'track[]'
 
     albums = {}
-    DB[:tracks].order(:albumid, :discnumber, :number).each do |track|
-      (albums[track[:albumid]] ||= []) << DB.row_type(:track, [track[:discnumber], track[:number], track[:songid]])
+    self[:tracks].order(:albumid, :discnumber, :number).each do |track|
+      (albums[track[:albumid]] ||= []) << Falcom::DB.row_type(:track, [track[:discnumber], track[:number], track[:songid]])
     end
     albums.each do |album_id, tracks|
-      DB[:albums].where(:id=>album_id).update(:tracks=>Sequel.pg_array(tracks))
+      self[:albums].where(:id=>album_id).update(:tracks=>Sequel.pg_array(tracks))
     end
 
     drop_table :tracks

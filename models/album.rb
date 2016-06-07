@@ -1,4 +1,5 @@
-class Album < Sequel::Model
+module Falcom
+class Album < Sequel::Model(DB)
   one_to_many :discnames, :key=>:albumid, :order=>:number
   one_to_many :albuminfos, :key=>:albumid, :order=>[:discnumber, :starttrack, Sequel.desc(:endtrack)]
   one_to_many :media, :key=>:albumid, :order=>:publicationdate
@@ -69,6 +70,7 @@ class Album < Sequel::Model
     song_ids = tracks_dataset.where(:discnumber=>disc, :number=>(start_track..end_track)).select(:songid)
     Song.where(:id=>song_ids).update(:gameid=>game_id)
   end
+end
 end
 
 # Table: albums

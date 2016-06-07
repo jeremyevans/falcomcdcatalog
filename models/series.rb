@@ -1,6 +1,8 @@
-class Series < Sequel::Model
+module Falcom
+class Series < Sequel::Model(DB)
   many_to_many :albums, :left_key=>:seriesid, :join_table=>:seriesalbums, :right_key=>:albumid, :order=>:sortname
   one_to_many :games, :key=>:seriesid, :order=>:name
+end
 end
 
 # Table: series

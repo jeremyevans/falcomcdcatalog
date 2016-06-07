@@ -1,4 +1,5 @@
-class Publisher < Sequel::Model
+module Falcom
+class Publisher < Sequel::Model(DB)
   one_to_many :media, :key=>:publisherid, :order=>:publicationdate
   one_to_many :albums, :read_only=>true, :dataset=>proc{Album.eager_graph(:media).filter(:media__publisherid=>id).order(:sortname)}, :eager_loader=>(proc do |eo|
       h = eo[:id_map]
@@ -16,6 +17,7 @@ class Publisher < Sequel::Model
       end
       records.each{|r| r.associations[:albums].uniq!}
     end)
+end
 end
 
 # Table: publishers

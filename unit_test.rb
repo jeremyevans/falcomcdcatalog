@@ -1,8 +1,9 @@
 $: << File.dirname(__FILE__)
 ENV['FALCOMCDS_DATABASE_URL'] = 'postgres:///fcc_test?user=fcc'
 require 'models'
-[:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
+[:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| Falcom::DB[x].delete}
 require 'minitest/autorun'
+include Falcom
 
 describe Album do
   before do

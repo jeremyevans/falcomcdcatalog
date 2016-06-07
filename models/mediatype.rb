@@ -1,5 +1,7 @@
-class Mediatype < Sequel::Model
+module Falcom
+class Mediatype < Sequel::Model(DB)
   one_to_many :media, :key=>:mediatypeid, :order=>:publicationdate
+end
 end
 
 # Table: mediatypes

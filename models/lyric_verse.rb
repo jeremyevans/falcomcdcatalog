@@ -1,5 +1,7 @@
-class LyricVerse < Sequel::Model(:lyricverses)
+module Falcom
+class LyricVerse < Sequel::Model(DB[:lyricverses])
   many_to_one :lyric, :key=>:lyricsongid
+end
 end
 
 # Table: lyricverses

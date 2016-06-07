@@ -1,4 +1,5 @@
-class Track < Sequel::Model(:track)
+module Falcom
+class Track < Sequel::Model(DB[:track])
   plugin :pg_row
   many_to_one :song, :key => :songid
 
@@ -7,6 +8,7 @@ class Track < Sequel::Model(:track)
   def album_and_number
     "#{album.fullname}, #{"Disc #{discnumber}, " if album.numdiscs > 1}Track #{number}"
   end
+end
 end
 
 # Table: track
