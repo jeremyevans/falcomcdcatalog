@@ -1,5 +1,5 @@
 $: << File.dirname(__FILE__)
-ENV['DATABASE_URL'] = 'postgres:///fcc_test?user=fcc&password=xXxXxXxXxXx'
+ENV['FALCOMCDS_DATABASE_URL'] = 'postgres:///fcc_test?user=fcc'
 require 'models'
 [:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| DB[x].delete}
 require 'minitest/autorun'

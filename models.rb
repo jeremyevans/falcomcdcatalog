@@ -2,15 +2,19 @@ Encoding.default_internal = Encoding.default_external = 'UTF-8' if RUBY_VERSION 
 require 'rubygems'
 require 'logger'
 $: << File.dirname(__FILE__)
-$:.unshift('/data/code/sequel/lib')
-require 'sequel/no_core_ext'
+require './.env.rb' if File.file?('./.env.rb')
+
+require 'sequel'
+
+DB = Sequel.connect(ENV['FALCOMCDS_DATABASE_URL'] || ENV['DATABASE_URL'])
+
+DB.extension(:pg_array, :pg_row)
 Sequel.extension :blank, :pg_array_ops, :pg_row_ops
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :prepared_statements_associations
-DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres:///?user=fcc&password=xXxXxXxXxXx')
-DB.extension(:pg_array, :pg_row)
 DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
-ADMIN = !ENV['DATABASE_URL']
+
+ADMIN = ENV['FALCOMCDS_ADMIN']
 # DB.logger = Logger.new($stdout)
 
 %w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require "models/#{x}"}

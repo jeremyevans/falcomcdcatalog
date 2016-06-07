@@ -1,2 +1,4 @@
-style.pid
-falcomcdcatalogtest.sqlite3
+/.env.rb
+/compiled_assets.json
+/public/javascripts
+/public/stylesheets/*.css
