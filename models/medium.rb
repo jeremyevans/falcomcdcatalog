@@ -30,3 +30,16 @@ class Medium < Sequel::Model
     self[:price] || 0
   end
 end
+
+# Table: media
+# Columns:
+#  id              | integer          | PRIMARY KEY DEFAULT nextval('media_id_seq'::regclass)
+#  albumid         | integer          |
+#  mediatypeid     | integer          |
+#  catalognumber   | text             |
+#  price           | integer          |
+#  publicationdate | date             |
+#  ordernum        | double precision |
+#  publisherid     | integer          |
+# Indexes:
+#  media_pkey | PRIMARY KEY btree (id)

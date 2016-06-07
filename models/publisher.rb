@@ -17,3 +17,10 @@ class Publisher < Sequel::Model
       records.each{|r| r.associations[:albums].uniq!}
     end)
 end
+
+# Table: publishers
+# Columns:
+#  id   | integer | PRIMARY KEY DEFAULT nextval('publishers_id_seq'::regclass)
+#  name | text    |
+# Indexes:
+#  publishers_pkey | PRIMARY KEY btree (id)

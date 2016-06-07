@@ -17,3 +17,17 @@ class Song < Sequel::Model
     @tracks
   end
 end
+
+# Table: songs
+# Columns:
+#  id            | integer | PRIMARY KEY DEFAULT nextval('songs_id_seq'::regclass)
+#  name          | text    |
+#  gameid        | integer |
+#  lyricid       | integer |
+#  arrangementof | integer |
+# Indexes:
+#  songs_pkey          | PRIMARY KEY btree (id)
+#  songs_name_index    | UNIQUE btree (name)
+#  songs_lyricid_index | btree (lyricid)
+# Referenced By:
+#  track | track_songid_fkey | (songid) REFERENCES songs(id)

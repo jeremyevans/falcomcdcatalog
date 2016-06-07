@@ -70,3 +70,16 @@ class Album < Sequel::Model
     Song.where(:id=>song_ids).update(:gameid=>game_id)
   end
 end
+
+# Table: albums
+# Columns:
+#  id       | integer | PRIMARY KEY DEFAULT nextval('albums_id_seq'::regclass)
+#  sortname | text    |
+#  picture  | text    |
+#  info     | text    |
+#  numdiscs | integer |
+#  fullname | text    |
+#  tracks   | track[] |
+# Indexes:
+#  albums_pkey    | PRIMARY KEY btree (id)
+#  album_song_ids | gin (song_ids(tracks))

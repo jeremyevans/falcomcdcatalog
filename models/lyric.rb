@@ -22,3 +22,16 @@ class Lyric < Sequel::Model(:lyricsongs)
     "#{song.name} (#{song.game.name rescue nil}#{" - #{song.arrangement.name}" if song.arrangementof})"
   end
 end
+
+# Table: lyricsongs
+# Columns:
+#  id                | integer | PRIMARY KEY DEFAULT nextval('lyricsongs_id_seq'::regclass)
+#  jsongname         | text    |
+#  rsongname         | text    |
+#  composer_id       | integer |
+#  arranger_id       | integer |
+#  lyricist_id       | integer |
+#  vocalist_id       | integer |
+#  joriginalsongname | text    |
+# Indexes:
+#  lyricsongs_pkey | PRIMARY KEY btree (id)

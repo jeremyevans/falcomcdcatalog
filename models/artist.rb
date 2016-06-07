@@ -13,3 +13,11 @@ class Artist < Sequel::Model
       records.each{|r| r.associations[:songs].uniq!}
     end)
 end
+
+# Table: artists
+# Columns:
+#  id    | integer | PRIMARY KEY DEFAULT nextval('artists_id_seq'::regclass)
+#  name  | text    |
+#  jname | text    |
+# Indexes:
+#  artists_pkey | PRIMARY KEY btree (id)
