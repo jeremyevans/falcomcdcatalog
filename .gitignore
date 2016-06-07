@@ -1,4 +1,6 @@
 /.env.rb
+/.rake_tasks.rb
 /compiled_assets.json
 /public/javascripts
 /public/stylesheets/*.css
+/test.rb
