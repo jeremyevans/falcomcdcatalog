@@ -12,7 +12,6 @@ module Falcom
     PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
     opts[:root] = File.dirname(__FILE__)
 
-    plugin :static, %w'/archive /favicon.ico /images /javascripts /stylesheets'
     if ADMIN
       use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
     end
@@ -77,6 +76,7 @@ module Falcom
       text.gsub(/<i>(.*?)<\/i>/m, '\1')
     end
 
+    plugin :public, :gzip=>true
     plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
     plugin :assets,
       :css=>{:public=>%w'bootstrap.min.css falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
@@ -87,7 +87,8 @@ module Falcom
       :compiled_css_dir=>'stylesheets',
       :compiled_js_dir=>'javascripts',
       :precompiled=>File.expand_path('../compiled_assets.json', __FILE__),
-      :prefix=>nil
+      :prefix=>nil,
+      :gzip=>true
     plugin :h
     plugin :symbol_matchers
     plugin :symbol_views
@@ -182,6 +183,7 @@ module Falcom
     end
 
     route do |r|
+      r.public
       r.assets if ADMIN
 
       r.root do
