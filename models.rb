@@ -12,7 +12,13 @@ module Falcom
 
   Sequel.extension :blank, :pg_array_ops, :pg_row_ops
   Model = Class.new(Sequel::Model)
-  Model.def_Model(self)
+  Model.db = DB
+  #Model.def_Model(self)
+  def self.Model(table)
+    c = Class.new(Model)
+    c.set_dataset(table)
+    c
+  end
   Model.plugin :prepared_statements
   Model.plugin :prepared_statements_associations
   DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
