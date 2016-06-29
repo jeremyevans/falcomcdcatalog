@@ -1,6 +1,6 @@
 #encoding: UTF-8
 module Falcom
-class Lyric < Sequel::Model(DB[:lyricsongs])
+class Lyric < Model(:lyricsongs)
   one_to_one :song, :key=>:lyricid
   one_to_many :lyric_verses, :key=>:lyricsongid, :order=>[:languageid, :number]
   one_to_many :english_verses, :class=>'Falcom::LyricVerse', :key=>:lyricsongid, :order=>:number, :conditions=>{:languageid=>1}

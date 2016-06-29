@@ -6,16 +6,19 @@ require env_file if File.file?(env_file)
 
 require 'sequel'
 
-module Falcom; end
-Falcom::DB = Sequel.connect(ENV['FALCOMCDS_DATABASE_URL'] || ENV['DATABASE_URL'])
+module Falcom
+  DB = Sequel.connect(ENV['FALCOMCDS_DATABASE_URL'] || ENV['DATABASE_URL'])
+  DB.extension(:pg_array, :pg_row)
 
-Falcom::DB.extension(:pg_array, :pg_row)
-Sequel.extension :blank, :pg_array_ops, :pg_row_ops
-Sequel::Model.plugin :prepared_statements
-Sequel::Model.plugin :prepared_statements_associations
-Falcom::DB.optimize_model_load = true if Falcom::DB.respond_to?(:optimize_model_load=)
+  Sequel.extension :blank, :pg_array_ops, :pg_row_ops
+  Model = Class.new(Sequel::Model)
+  Model.def_Model(self)
+  Model.plugin :prepared_statements
+  Model.plugin :prepared_statements_associations
+  DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 
-ADMIN = ENV['FALCOMCDS_ADMIN']
-# Falcom::DB.logger = Logger.new($stdout)
+  ADMIN = ENV['FALCOMCDS_ADMIN']
+  # DB.logger = Logger.new($stdout)
+end
 
 %w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require File.expand_path("../models/#{x}", __FILE__)}

@@ -1,5 +1,5 @@
 module Falcom
-class Track < Sequel::Model(DB[:track])
+class Track < Model(:track)
   plugin :pg_row
   many_to_one :song, :key => :songid
 

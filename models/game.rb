@@ -1,5 +1,5 @@
 module Falcom
-class Game < Sequel::Model(DB)
+class Game < Model
   many_to_one :series, :key=>:seriesid
   one_to_many :songs, :key=>:gameid, :order=>:name
   many_to_many :albums, :left_key=>:gameid, :join_table=>:gamealbums, :right_key=>:albumid, :order=>:sortname

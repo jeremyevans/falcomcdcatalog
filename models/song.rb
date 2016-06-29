@@ -1,5 +1,5 @@
 module Falcom
-class Song < Sequel::Model(DB)
+class Song < Model
   one_to_many :arrangements, :class=>'Falcom::Song', :key=>:arrangementof
   many_to_one :game, :key=>:gameid
   many_to_one :lyric, :key=>:lyricid

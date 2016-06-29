@@ -1,5 +1,5 @@
 module Falcom
-class Artist < Sequel::Model(DB)
+class Artist < Model
   one_to_many :songs, :order=>:songs__name, :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(Lyric, {:id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]}, :qualify=>:symbol)}, :eager_loader=>(proc do |eo|
       h = eo[:id_map]
       ids = h.keys

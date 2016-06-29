@@ -1,5 +1,5 @@
 module Falcom
-class Album < Sequel::Model(DB)
+class Album < Model
   one_to_many :discnames, :key=>:albumid, :order=>:number
   one_to_many :albuminfos, :key=>:albumid, :order=>[:discnumber, :starttrack, Sequel.desc(:endtrack)]
   one_to_many :media, :key=>:albumid, :order=>:publicationdate
