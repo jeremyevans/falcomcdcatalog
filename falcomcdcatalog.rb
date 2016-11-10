@@ -77,7 +77,7 @@ module Falcom
     end
 
     plugin :public, :gzip=>true
-    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
+    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>:erubi
     plugin :assets,
       :css=>{:public=>%w'bootstrap.min.css falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
       :js=>{:public=>%w'jquery-1.11.1.min.js bootstrap.min.js', :admin=>%w'jquery.autocomplete.js autoforme.js'},
