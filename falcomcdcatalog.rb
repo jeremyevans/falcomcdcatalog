@@ -139,7 +139,7 @@ module Falcom
         model Lyric do
           class_display_name 'Lyric'
           columns [:rsongname, :jsongname, :joriginalsongname, :arranger, :composer, :lyricist, :vocalist]
-          order :song__name
+          order Sequel[:song][:name]
           eager_graph :song
           display_name{|obj| obj.song.name}
         end
@@ -205,7 +205,7 @@ module Falcom
             @discs[track.discnumber-1][:tracks].push track
           end
           @album.albuminfos.each {|info| (@albuminfos[[info.discnumber, info.starttrack]] ||= []) << info}
-          @media = Medium.filter(:albumid=>i).order(:media__publicationdate).eager(:mediatype, :publisher).all
+          @media = Medium.filter(:albumid=>i).order(Sequel[:media][:publicationdate]).eager(:mediatype, :publisher).all
           :album
         end
 
@@ -309,8 +309,8 @@ module Falcom
        
         r.is "series/:d" do |id|
           i = id.to_i
-          @series = Series.eager_graph(:albums).order(:albums__fullname).filter(:series__id=>i).all.first
-          @games = Game.eager_graph(:albums).order(:games__name, :albums__fullname).filter(:games__seriesid=>i).all
+          @series = Series.eager_graph(:albums).order(Sequel[:albums][:fullname]).filter(Sequel[:series][:id]=>i).all.first
+          @games = Game.eager_graph(:albums).order(Sequel[:games][:name], Sequel[:albums][:fullname]).filter(Sequel[:games][:seriesid]=>i).all
           :series
         end
         
@@ -344,9 +344,9 @@ module Falcom
             @album = Album[id.to_i]
             @games = Game.order(:name)
             @tracks = @album.tracks_dataset.
-              select(:tracks__discnumber, :tracks__number, :tracks__songid, :song__name, :game__name___game, :arrangement__name___arrangement).
+              select(Sequel[:tracks][:discnumber], Sequel[:tracks][:number], Sequel[:tracks][:songid], Sequel[:song][:name], Sequel[:game][:name].as(:game), Sequel[:arrangement][:name].as(:arrangement)).
               association_left_join(:song=>[:game, :arrangement]).
-              order(:tracks__discnumber, :tracks__number)
+              order(Sequel[:tracks][:discnumber], Sequel[:tracks][:number])
             :new_tracklist_table
           end
 
