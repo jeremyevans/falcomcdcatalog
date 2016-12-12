@@ -134,7 +134,7 @@ describe Album do
     g = Game.create(:name=>'Game')
     @album.update_tracklist_game(1, 1, 1, g.id)
     s1.refresh.gameid.must_equal g.id
-    s2.refresh.gameid.must_equal nil
+    s2.refresh.gameid.must_be_nil
 
     g2 = Game.create(:name=>'Game')
     @album.update_tracklist_game(1, 2, 2, g2.id)
@@ -157,7 +157,7 @@ describe Albuminfo do
   end
 
   specify "associations be correct" do
-    @info.album.must_equal nil
+    @info.album.must_be_nil
   end
 end
 
@@ -192,7 +192,7 @@ describe Discname do
   end
 
   specify "associations be correct" do
-    @disc.album.must_equal nil
+    @disc.album.must_be_nil
   end
 end
 
@@ -205,7 +205,7 @@ describe Game do
   end
 
   specify "associations be correct" do
-    @game.series.must_equal nil
+    @game.series.must_be_nil
     @game.songs.must_equal []
     @game.albums.must_equal []
   end
@@ -223,15 +223,15 @@ describe Lyric do
   end
 
   specify "associations be correct" do
-    @lyric.song.must_equal nil
+    @lyric.song.must_be_nil
     @lyric.lyric_verses.must_equal []
     @lyric.english_verses.must_equal []
     @lyric.romaji_verses.must_equal []
     @lyric.japanese_verses.must_equal []
-    @lyric.composer.must_equal nil
-    @lyric.arranger.must_equal nil
-    @lyric.vocalist.must_equal nil
-    @lyric.lyricist.must_equal nil
+    @lyric.composer.must_be_nil
+    @lyric.arranger.must_be_nil
+    @lyric.vocalist.must_be_nil
+    @lyric.lyricist.must_be_nil
   end
 
   specify "#has_japanese_verses? should return whether there are any japanese verses" do
@@ -278,7 +278,7 @@ describe LyricVerse do
   end
 
   specify "associations be correct" do
-    @verse.lyric.must_equal nil
+    @verse.lyric.must_be_nil
   end
 end
 
@@ -313,7 +313,7 @@ describe Medium do
   specify "associations be correct" do
     @medium.album.must_equal @album
     @medium.mediatype.must_equal @mtype
-    @medium.publisher.must_equal nil
+    @medium.publisher.must_be_nil
   end
 
   specify ".find_albums_by_date should return an array of arrays of date, album, and year" do
@@ -399,9 +399,9 @@ describe Song do
 
   specify "associations be correct" do
     @song.arrangements.must_equal []
-    @song.game.must_equal nil
-    @song.lyric.must_equal nil
-    @song.arrangement.must_equal nil
+    @song.game.must_be_nil
+    @song.lyric.must_be_nil
+    @song.arrangement.must_be_nil
   end
 
   specify "#tracks should be an array of tracks associated to the song, with an associated album" do
