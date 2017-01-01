@@ -7,8 +7,8 @@ require env_file if File.file?(env_file)
 require 'sequel'
 
 module Falcom
-  DB = Sequel.connect(ENV['FALCOMCDS_DATABASE_URL'] || ENV['DATABASE_URL'])
-  DB.extension(:pg_array, :pg_row)
+  DB = Sequel.connect(ENV['FALCOMCDS_DATABASE_URL'] || ENV['DATABASE_URL'], :identifier_mangling=>false)
+  DB.extension(:freeze_datasets, :pg_array, :pg_row)
 
   Sequel.extension :blank, :pg_array_ops, :pg_row_ops
   Model = Class.new(Sequel::Model)
