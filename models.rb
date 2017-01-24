@@ -19,8 +19,6 @@ module Falcom
     c.set_dataset(table)
     c
   end
-  Model.plugin :prepared_statements
-  Model.plugin :prepared_statements_associations
   DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 
   ADMIN = ENV['FALCOMCDS_ADMIN']
