@@ -11,6 +11,9 @@ module Falcom
   class App < Roda
     PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
     opts[:root] = File.dirname(__FILE__)
+    opts[:unsupported_block_result] = :raise
+    opts[:unsupported_matcher] = :raise
+    opts[:verbatim_string_matcher] = true
 
     if ADMIN
       use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
@@ -195,7 +198,7 @@ module Falcom
           page.to_sym
         end
 
-        r.is "album/:id" do |id|
+        r.is "album", :id do |id|
           i = id.to_i
           @album = Album[i]
           @discs = []
@@ -209,45 +212,66 @@ module Falcom
           :album
         end
 
-        r.is 'albums_by_date:optd' do |year|
-          year = year.to_i if year
-          @pagetitle = year ? "Albums Released in #{year}" : 'Albums By Release Date'
-          @albums = Medium.find_albums_by_date(year)
-          albums_by_category
+        r.on 'albums_by_date' do
+          r.is do
+            @pagetitle = 'Albums By Release Date'
+            @albums = Medium.find_albums_by_date(nil)
+            albums_by_category
+          end
+
+          r.is :d do |year|
+            year = year.to_i
+            @pagetitle = "Albums Released in #{year}"
+            @albums = Medium.find_albums_by_date(year)
+            albums_by_category
+          end
         end
 
-        r.is 'albums_by_media_type:optd' do |mediatype|
-          @albums = Medium.find_albums_by_mediatype(mediatype)
-          @pagetitle = if !(mediatype and @albums.length > 0)
-            'Albums By Media Type'
-          else
-            "Albums in #{@albums[0][2]} format"
-          end
-          albums_by_category
+        r.on 'albums_by_media_type' do
+	  r.is do
+            @albums = Medium.find_albums_by_mediatype(nil)
+            @pagetitle = 'Albums By Media Type'
+            albums_by_category
+	  end
+
+	  r.is :d do |mediatype|
+            @albums = Medium.find_albums_by_mediatype(mediatype)
+            @pagetitle = "Albums in #{@albums[0][2]} format"
+            albums_by_category
+	  end
         end
 
-        r.is 'albums_by_name:opt' do |initial|
-          @albums = Album.group_all_by_sortname(initial)
-          @pagetitle = if !(initial and @albums.length > 0)
-            'Albums By Name'
-          else
-            "Albums Starting with #{initial}"
-          end
-          albums_by_category
+        r.on 'albums_by_name' do
+	  r.is do
+            @albums = Album.group_all_by_sortname(nil)
+            @pagetitle = 'Albums By Name'
+            albums_by_category
+	  end
+
+	  r.is /(\w)/ do |initial|
+            @albums = Album.group_all_by_sortname(initial)
+            @pagetitle = "Albums Starting with #{initial}"
+            albums_by_category
+	  end
         end
         
-        r.is 'albums_by_price:optd' do |price|
-          price = price.to_i if price
-          @pagetitle = case price
-          when nil
-            'Albums By Price'
-          when 0
-            'Albums Not for Sale'
-          else
-            "Albums Costing #{price} Yen"
-          end
-          @albums = Medium.find_albums_by_price(price)
-          albums_by_category
+        r.on 'albums_by_price' do
+	  r.is do
+            @albums = Medium.find_albums_by_price(nil)
+            @pagetitle = 'Albums By Price'
+            albums_by_category
+	  end
+
+	  r.is :d do |price|
+            price = price.to_i
+            @albums = Medium.find_albums_by_price(price)
+            @pagetitle = if price == 0
+              'Albums Not for Sale'
+            else
+              "Albums Costing #{price} Yen"
+            end
+            albums_by_category
+	  end
         end
 
         r.is "artists" do
@@ -255,12 +279,12 @@ module Falcom
           :artists
         end
         
-        r.is "artist/:d" do |id|
+        r.is "artist", :d do |id|
           @artist = Artist[id.to_i]
           :artist
         end
         
-        r.is "game/:d" do |id|
+        r.is "game", :d do |id|
           @game = Game[id.to_i]
           :game
         end
@@ -270,12 +294,12 @@ module Falcom
           :games
         end
 
-        r.is "japanese_lyric/:id" do |id|
+        r.is "japanese_lyric", :d do |id|
           @lyric = Lyric[id.to_i]
           :japanese_lyric
         end
 
-        r.is "lyric/:id" do |id|
+        r.is "lyric", :d do |id|
           @lyric = Lyric[id.to_i]
           :lyric
         end
@@ -285,7 +309,7 @@ module Falcom
           :photoboard
         end
 
-        r.is "publisher/:d" do |id|
+        r.is "publisher", :d do |id|
           @publisher = Publisher[id.to_i]
           :publisher
         end
@@ -307,7 +331,7 @@ module Falcom
           r.redirect "/song/#{(rand(Song.count)+1)}"
         end
        
-        r.is "series/:d" do |id|
+        r.is "series", :d do |id|
           i = id.to_i
           @series = Series.eager_graph(:albums).order(Sequel[:albums][:fullname]).filter(Sequel[:series][:id]=>i).all.first
           @games = Game.eager_graph(:albums).order(Sequel[:games][:name], Sequel[:albums][:fullname]).filter(Sequel[:games][:seriesid]=>i).all
@@ -319,7 +343,7 @@ module Falcom
           :series_list
         end
         
-        r.is "song/:d" do |id|
+        r.is "song", :d do |id|
           @song = Song[id.to_i]
           :song
         end
@@ -334,13 +358,13 @@ module Falcom
         end
         
         if ADMIN
-          r.is "new_tracklist/:d" do |id|
+          r.is "new_tracklist", :d do |id|
             @album = Album[id.to_i]
             r.redirect("/album/#{@album.id}")if @album.tracks.length > 0
             :new_tracklist
           end
         
-          r.is "new_tracklist_table/:d" do |id|
+          r.is "new_tracklist_table", :d do |id|
             @album = Album[id.to_i]
             @games = Game.order(:name)
             @tracks = @album.tracks_dataset.
@@ -356,13 +380,13 @@ module Falcom
         
       if ADMIN
         r.post do
-          r.is "create_tracklist/:d" do |id|
+          r.is "create_tracklist", :d do |id|
             album = Album[id.to_i]
             album.create_tracklist(params[:tracklist])
             r.redirect "/album/#{album.id}" 
           end
 
-          r.is "update_tracklist_game/:d" do |id|
+          r.is "update_tracklist_game", :d do |id|
             Album[id.to_i].update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
             r.redirect "/new_tracklist_table/#{id}"
           end
