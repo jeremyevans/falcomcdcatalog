@@ -26,3 +26,4 @@ module Falcom
 end
 
 %w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require File.expand_path("../models/#{x}", __FILE__)}
+Falcom::DB.freeze
