@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
 require 'rubygems'
-require 'tilt/erubi'
 require 'roda'
 require File.expand_path('../models', __FILE__)
 require 'thamble'
