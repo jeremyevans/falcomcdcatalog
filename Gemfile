@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem 'roda', '>= 1.2.0'
-gem 'erubis'
+gem 'erubi'
 gem 'tilt'
 gem 'sass'
 gem 'rack-indifferent'
