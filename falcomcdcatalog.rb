@@ -314,7 +314,7 @@ module Falcom
           :publisher
         end
         
-        r.is "publishers" do |id|
+        r.is "publishers" do
           @publishers = Publisher.order(:name)
           :publishers
         end
