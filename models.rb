@@ -13,12 +13,9 @@ module Falcom
   Sequel.extension :blank, :pg_array_ops, :pg_row_ops
   Model = Class.new(Sequel::Model)
   Model.db = DB
-  #Model.def_Model(self)
-  def self.Model(table)
-    c = Class.new(Model)
-    c.set_dataset(table)
-    c
-  end
+  Model.def_Model(self)
+  Model.plugin :forme
+  Model.plugin :subclasses
   DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 
   ADMIN = ENV['FALCOMCDS_ADMIN']
@@ -26,4 +23,5 @@ module Falcom
 end
 
 %w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require File.expand_path("../models/#{x}", __FILE__)}
+Falcom::Model.freeze_descendents
 Falcom::DB.freeze
