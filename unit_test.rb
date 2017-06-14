@@ -426,7 +426,7 @@ describe Track do
   end
 
   specify "associations be correct" do
-    @track.song(true).must_equal @song
+    @track.song(:reload=>true).must_equal @song
   end
 
   specify "#album_and_number should give the album, number, and discnumber (if numdiscs is > 1)" do
