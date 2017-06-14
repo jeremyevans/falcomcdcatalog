@@ -1,11 +1,11 @@
 module Falcom
 class Artist < Model
-  one_to_many :songs, :order=>Sequel[:songs][:name], :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(Lyric, {:id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]}, :qualify=>:symbol)}, :eager_loader=>(proc do |eo|
+  one_to_many :songs, :order=>Sequel[:songs][:name], :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(:lyricsongs, {:id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]}, :qualify=>:symbol)}, :eager_loader=>(proc do |eo|
       h = eo[:id_map]
       ids = h.keys
       records = eo[:rows]
       records.each{|r| r.associations[:songs] = []}
-      Song.select_all(:songs).select_more(Sequel[:lyricsongs][:composer_id], Sequel[:lyricsongs][:arranger_id], Sequel[:lyricsongs][:vocalist_id], Sequel[:lyricsongs][:lyricist_id]).join(Lyric, {:id=>:lyricid}, :table_alias=>:lyricsongs){Sequel.or(:composer_id=>ids, :arranger_id=>ids, :vocalist_id=>ids, :lyricist_id=>ids)}.order(Sequel[:songs][:name]).all do |song|
+      Song.select_all(:songs).select_more(Sequel[:lyricsongs][:composer_id], Sequel[:lyricsongs][:arranger_id], Sequel[:lyricsongs][:vocalist_id], Sequel[:lyricsongs][:lyricist_id]).join(:lyricsongs, {:id=>:lyricid}, :table_alias=>:lyricsongs){Sequel.or(:composer_id=>ids, :arranger_id=>ids, :vocalist_id=>ids, :lyricist_id=>ids)}.order(Sequel[:songs][:name]).all do |song|
         [:composer_id, :arranger_id, :vocalist_id, :lyricist_id].each do |x|
           recs = h[song.values.delete(x)]
           recs.each{|r| r.associations[:songs] << song} if recs
