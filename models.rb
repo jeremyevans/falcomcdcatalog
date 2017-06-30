@@ -16,7 +16,6 @@ module Falcom
   Model.def_Model(self)
   Model.plugin :forme
   Model.plugin :subclasses
-  DB.optimize_model_load = true if DB.respond_to?(:optimize_model_load=)
 
   ADMIN = ENV['FALCOMCDS_ADMIN']
   # DB.logger = Logger.new($stdout)
