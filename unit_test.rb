@@ -1,19 +1,11 @@
-ENV['FALCOMCDS_DATABASE_URL'] = 'postgres:///fcc_test?user=fcc'
-require File.expand_path('../models', __FILE__)
-[:albuminfos, :discnames, :media, :mediatypes, :publishers, :track, :lyricverses, :lyricsongs, :songs, :games, :series, :artists, :albums].each{|x| Falcom::DB[x].delete}
-require 'minitest/autorun'
+require_relative 'test_helper'
+
 include Falcom
 
 describe Album do
   before do
     @album = Album.create(:fullname=>'A TestAlbum', :sortname=>'TestAlbum')
     @album2 = Album.create(:fullname=>'OtherAlbum', :sortname=>'OtherAlbum')
-  end
-  after do
-    Album.dataset.delete
-    Song.dataset.delete
-    Discname.dataset.delete
-    Game.dataset.delete
   end
 
   specify "associations be correct" do
@@ -152,9 +144,6 @@ describe Albuminfo do
   before do
     @info = Albuminfo.create(:discnumber=>1, :starttrack=>2, :endtrack=>4, :info=>'Bonus')
   end
-  after do
-    Albuminfo.dataset.delete
-  end
 
   specify "associations be correct" do
     @info.album.must_be_nil
@@ -164,11 +153,6 @@ end
 describe Artist do
   before do
     @artist = Artist.create(:name=>'blah')
-  end
-  after do
-    Song.dataset.delete
-    Lyric.dataset.delete
-    Artist.dataset.delete
   end
 
   specify "associations should be correct" do
@@ -187,9 +171,6 @@ describe Discname do
   before do
     @disc = Discname.create
   end
-  after do
-    Discname.dataset.delete
-  end
 
   specify "associations be correct" do
     @disc.album.must_be_nil
@@ -199,9 +180,6 @@ end
 describe Game do
   before do
     @game = Game.create
-  end
-  after do
-    Game.dataset.delete
   end
 
   specify "associations be correct" do
@@ -214,12 +192,6 @@ end
 describe Lyric do
   before do
     @lyric = Lyric.create
-  end
-  after do
-    Song.dataset.delete
-    Game.dataset.delete
-    LyricVerse.dataset.delete
-    Lyric.dataset.delete
   end
 
   specify "associations be correct" do
@@ -273,9 +245,6 @@ describe LyricVerse do
   before do
     @verse = LyricVerse.create
   end
-  after do
-    LyricVerse.dataset.delete
-  end
 
   specify "associations be correct" do
     @verse.lyric.must_be_nil
@@ -303,11 +272,6 @@ describe Medium do
     @mtype2 = Mediatype.create(:name=>'DVD')
     @medium = Medium.create(:mediatype=>@mtype, :price=>900, :publicationdate=>'1999-10-31', :album=>@album)
     @medium2 = Medium.create(:mediatype=>@mtype2, :publicationdate=>'2000-11-23', :album=>@album2)
-  end
-  after do
-    Medium.dataset.delete
-    Mediatype.dataset.delete
-    Album.dataset.delete
   end
 
   specify "associations be correct" do
@@ -361,11 +325,6 @@ describe Publisher do
     @album = Album.create(:fullname=>'Boh')
     @medium = Medium.create(:publisher=>@pub, :price=>900, :publicationdate=>'1999-10-31', :album=>@album)
   end
-  after do
-    Medium.dataset.delete
-    Album.dataset.delete
-    Publisher.dataset.delete
-  end
 
   specify "associations be correct" do
     @pub.media.must_equal [@medium]
@@ -378,9 +337,6 @@ describe Series do
   before do
     @series = Series.create
   end
-  after do
-    Series.dataset.delete
-  end
 
   specify "associations be correct" do
     @series.albums.must_equal []
@@ -391,10 +347,6 @@ end
 describe Song do
   before do
     @song = Song.create(:name=>'S')
-  end
-  after do
-    Song.dataset.delete
-    Album.dataset.delete
   end
 
   specify "associations be correct" do
@@ -418,11 +370,6 @@ describe Track do
     @album = Album.create(:fullname=>'Blah', :numdiscs=>2)
     @song = Song.create(:name=>'Song')
     @track = Track.create(:number=>10, :discnumber=>2, :album=>@album, :song=>@song)
-  end
-  after do
-    Track.dataset.delete
-    Album.dataset.delete
-    Song.dataset.delete
   end
 
   specify "associations be correct" do
