@@ -1,17 +1,13 @@
-#!/usr/bin/env ruby
 #encoding: utf-8
-require 'rubygems'
-require File.expand_path('../models', __FILE__)
+
 require 'roda'
 require 'thamble'
 require 'rack/indifferent'
+require_relative 'models'
 
 module Falcom
   class App < Roda
     opts[:root] = File.dirname(__FILE__)
-    opts[:unsupported_block_result] = :raise
-    opts[:unsupported_matcher] = :raise
-    opts[:verbatim_string_matcher] = true
 
     if ADMIN
       use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
