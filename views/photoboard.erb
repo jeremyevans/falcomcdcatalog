@@ -1,3 +1,4 @@
+<% @pagetitle = 'Album Photoboard' %>
 <div id="photoboard">
 <% @albums.each do |album| %>
 	<%== album_img(album, "/album/#{album.id}") %>
