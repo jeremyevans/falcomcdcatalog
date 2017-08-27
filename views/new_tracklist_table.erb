@@ -1,7 +1,9 @@
 <% @pagetitle = "Tracklist for #{@album.fullname}" %>
 
 <form method="post" action="/update_tracklist_game/<%= @album.id %>">
-Disc: <input type="text" name="disc" size="1" /> Start: <input type="text" name="starttrack" size="2" /> &nbsp; End: <input type="text" name="endtrack" size="2" />
+<label>Disc: <input type="text" name="disc" size="1" /></label>
+<label>Start: <input type="text" name="starttrack" size="2" /></label> &nbsp;
+<label>End: <input type="text" name="endtrack" size="2" /></label>
 <%== model_select('game', @games) %>
 <input name="commit" type="submit" value="Assign to Game" /></form>
 
