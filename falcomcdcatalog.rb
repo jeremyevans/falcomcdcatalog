@@ -2,7 +2,6 @@
 
 require 'roda'
 require 'thamble'
-require 'rack/indifferent'
 require_relative 'models'
 
 module Falcom
@@ -92,8 +91,7 @@ module Falcom
       :gzip=>true
     plugin :h
     plugin :symbol_views
-    plugin :delegate
-    request_delegate :params
+    plugin :typecast_params
     plugin :disallow_file_uploads
 
     plugin :error_handler do |e|
@@ -343,7 +341,7 @@ module Falcom
         end
         
         r.is "song_search_results" do
-          @songs = if (songname = r['songname']) && !songname.empty?
+          @songs = if songname = typecast_params.nonempty_str('songname')
             Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
           else
             []
@@ -376,12 +374,12 @@ module Falcom
         r.post do
           r.is "create_tracklist", Integer do |id|
             album = Album.with_pk!(id)
-            album.create_tracklist(params[:tracklist])
+            album.create_tracklist(typecast_params.str!('tracklist'))
             r.redirect "/album/#{album.id}" 
           end
 
           r.is "update_tracklist_game", Integer do |id|
-            Album.with_pk!(id).update_tracklist_game(params[:disc].to_i, params[:starttrack].to_i, params[:endtrack].to_i, params[:game].to_i)
+            Album.with_pk!(id).update_tracklist_game(*typecast_params.pos_int!(%w'disc starttrack endtrack game'))
             r.redirect "/new_tracklist_table/#{id}"
           end
 
