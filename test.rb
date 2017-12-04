@@ -15,6 +15,13 @@ Falcom::App.not_found{raise "path not found: #{request.path_info}"}
 Falcom::App.error{|e| raise e}
 Falcom::App.freeze
 
+begin
+  require 'refrigerator'
+rescue LoadError
+else
+  Refrigerator.freeze_core(:except=>[(Object.superclass || Object).name])
+end
+
 class Minitest::Spec
   include Rack::Test::Methods
   include Capybara::DSL
