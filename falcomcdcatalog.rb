@@ -95,13 +95,18 @@ module Falcom
     plugin :disallow_file_uploads
 
     plugin :error_handler do |e|
-      $stderr.puts e.message
-      e.backtrace.each{|x| $stderr.puts x}
-      view(:content=>"<h3>Oops, an error occurred.</h3>")
+      case e
+      when Roda::RodaPlugins::TypecastParams::Error
+        response.status = 400
+        view(:content=>"<h1>Invalid parameter submitted: #{h e.param_name}</h1>")
+      else
+        $stderr.puts "#{e.class}: #{e.message}", e.backtrace
+        view(:content=>"<h1>Internal Server Error</h1>")
+      end
     end
 
     plugin :not_found do
-      view(:content=>"<h3>The page you are looking for does not exist.</h3>")
+      view(:content=>"<h1>The page you are looking for does not exist.</h1>")
     end
 
     if ADMIN
