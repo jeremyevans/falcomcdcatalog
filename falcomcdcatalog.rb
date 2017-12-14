@@ -92,6 +92,7 @@ module Falcom
     plugin :h
     plugin :symbol_views
     plugin :typecast_params
+    alias tp typecast_params
     plugin :disallow_file_uploads
 
     plugin :error_handler do |e|
@@ -346,7 +347,7 @@ module Falcom
         end
         
         r.is "song_search_results" do
-          @songs = if songname = typecast_params.nonempty_str('songname')
+          @songs = if songname = tp.nonempty_str('songname')
             Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
           else
             []
@@ -379,12 +380,12 @@ module Falcom
         r.post do
           r.is "create_tracklist", Integer do |id|
             album = Album.with_pk!(id)
-            album.create_tracklist(typecast_params.str!('tracklist'))
+            album.create_tracklist(tp.str!('tracklist'))
             r.redirect "/album/#{album.id}" 
           end
 
           r.is "update_tracklist_game", Integer do |id|
-            Album.with_pk!(id).update_tracklist_game(*typecast_params.pos_int!(%w'disc starttrack endtrack game'))
+            Album.with_pk!(id).update_tracklist_game(*tp.pos_int!(%w'disc starttrack endtrack game'))
             r.redirect "/new_tracklist_table/#{id}"
           end
 
