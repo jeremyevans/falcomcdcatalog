@@ -94,6 +94,7 @@ module Falcom
     plugin :typecast_params
     alias tp typecast_params
     plugin :disallow_file_uploads
+    plugin :request_aref, :raise
 
     plugin :error_handler do |e|
       case e
