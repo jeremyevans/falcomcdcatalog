@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'roda', '>= 3.3'
+gem 'roda', '>= 3.5'
 gem 'erubi'
 gem 'tilt'
 gem 'sass'
