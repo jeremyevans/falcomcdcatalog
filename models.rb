@@ -13,6 +13,7 @@ module Falcom
   Model.def_Model(self)
   Model.plugin :forme
   Model.plugin :subclasses
+  Model.plugin :pg_auto_constraint_validations
 
   ADMIN = ENV['FALCOMCDS_ADMIN']
 end
