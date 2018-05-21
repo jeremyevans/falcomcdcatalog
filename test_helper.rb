@@ -4,6 +4,7 @@ require_relative 'models'
 db_name = Falcom::DB.get{current_database.function} 
 raise "Doesn't look like a test database (database name: #{db_name}), not running tests" unless db_name =~ /test\z/
 
+ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
 gem 'minitest'
 require 'minitest/autorun'
 require 'minitest/hooks/default'
