@@ -77,9 +77,9 @@ module Falcom
     end
 
     plugin :public, :gzip=>true
-    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>:erubi
+    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
     plugin :assets,
-      :css=>{:public=>%w'bootstrap.min.css falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
+      :css=>{:public=>%w'bootstrap-3.3.7.customized.min.css falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
       :js=>{:public=>%w'jquery-1.11.1.min.js bootstrap.min.js', :admin=>%w'jquery.autocomplete.js autoforme.js'},
       :css_opts=>{:style=>:compressed, :cache=>false},
       :compiled_path=>nil,
@@ -186,6 +186,17 @@ module Falcom
 
       Forme.register_config(:mine, :base=>:default, :labeler=>:explicit, :wrapper=>:div)
       Forme.default_config = :mine
+    end
+
+    plugin :content_security_policy do |csp|
+      csp.default_src :none
+      csp.style_src :self, :unsafe_inline
+      csp.script_src :self
+      csp.connect_src :self
+      csp.img_src :self
+      csp.form_action :self
+      csp.base_uri :none
+      csp.frame_ancestors :none
     end
 
     route do |r|
