@@ -9,7 +9,6 @@ module Falcom
     opts[:root] = File.dirname(__FILE__)
 
     if ADMIN
-      use Rack::Session::Cookie, :secret=>SecureRandom.random_bytes(40)
       plugin :strip_path_prefix
       PUBLIC_ROOT = 'public'
     else
@@ -113,6 +112,13 @@ module Falcom
 
     if ADMIN
       plugin :flash
+
+      require 'securerandom'
+      plugin :sessions,
+        :cipher_secret=>SecureRandom.random_bytes(32),
+        :hmac_secret=>SecureRandom.random_bytes(32),
+        :key=>'falcomcds.session'
+
       plugin :autoforme do
         inline_mtm_associations :all
         association_links :all
