@@ -19,7 +19,7 @@ begin
   require 'refrigerator'
 rescue LoadError
 else
-  Refrigerator.freeze_core(:except=>[(Object.superclass || Object).name])
+  Refrigerator.freeze_core(:except=>['BasicObject'])
 end
 
 class Minitest::Spec
