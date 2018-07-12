@@ -3,7 +3,7 @@ require_relative '.rake_tasks' if File.file?('./.rake_tasks.rb')
 desc "Run specs"
 task :spec do
   sh %{#{FileUtils::RUBY} unit_test.rb}
-  sh %{#{FileUtils::RUBY} test.rb} if RUBY_VERSION >= '2'
+  sh %{#{FileUtils::RUBY} test.rb}
 end
 
 desc "Run specs"

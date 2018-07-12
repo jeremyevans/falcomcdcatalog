@@ -115,8 +115,7 @@ module Falcom
 
       require 'securerandom'
       plugin :sessions,
-        :cipher_secret=>SecureRandom.random_bytes(32),
-        :hmac_secret=>SecureRandom.random_bytes(32),
+        :secret=>SecureRandom.random_bytes(64),
         :key=>'falcomcds.session'
 
       plugin :autoforme do
