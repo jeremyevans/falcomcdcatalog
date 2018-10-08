@@ -95,6 +95,14 @@ module Falcom
     plugin :disallow_file_uploads
     plugin :request_aref, :raise
 
+    logger = case ENV['RACK_ENV']
+    when 'development', 'test' # Remove development after Unicorn 5.5+
+      Class.new{def write(_) end}.new
+    else
+      $stderr
+    end
+    plugin :common_logger, logger
+
     plugin :error_handler do |e|
       case e
       when Roda::RodaPlugins::TypecastParams::Error
