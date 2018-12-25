@@ -80,9 +80,6 @@ describe 'falcomcdcatalog' do
     click_link 'Falcom Ordering Information'
     page.title.must_equal 'Falcom CD Catalog - English Edition - How to Order Albums from Falcom'
 
-    click_link 'Interested in seeing feedback from other people who have ordered from Falcom?'
-    page.title.must_equal 'Falcom CD Catalog - English Edition - Feedback from Others Who Have Ordered From Falcom'
-
     visit '/'
     click_link 'Old Site (2003-2005)'
     page.body.must_include 'If you are still interested in the old site, you can find it archived'
