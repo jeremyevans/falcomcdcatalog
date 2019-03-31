@@ -253,41 +253,41 @@ module Falcom
         end
 
         r.on 'albums_by_media_type' do
-	  r.is do
+          r.is do
             @albums = Medium.find_albums_by_mediatype(nil)
             @pagetitle = 'Albums By Media Type'
             albums_by_category
-	  end
+          end
 
-	  r.is Integer  do |mediatype|
+          r.is Integer  do |mediatype|
             @albums = Medium.find_albums_by_mediatype(mediatype)
             @pagetitle = "Albums in #{@albums[0][2]} format"
             albums_by_category
-	  end
+          end
         end
 
         r.on 'albums_by_name' do
-	  r.is do
+          r.is do
             @albums = Album.group_all_by_sortname(nil)
             @pagetitle = 'Albums By Name'
             albums_by_category
-	  end
+          end
 
-	  r.is /(\w)/ do |initial|
+          r.is /(\w)/ do |initial|
             @albums = Album.group_all_by_sortname(initial)
             @pagetitle = "Albums Starting with #{initial}"
             albums_by_category
-	  end
+          end
         end
         
         r.on 'albums_by_price' do
-	  r.is do
+          r.is do
             @albums = Medium.find_albums_by_price(nil)
             @pagetitle = 'Albums By Price'
             albums_by_category
-	  end
+          end
 
-	  r.is Integer do |price|
+          r.is Integer do |price|
             @albums = Medium.find_albums_by_price(price)
             @pagetitle = if price == 0
               'Albums Not for Sale'
@@ -295,7 +295,7 @@ module Falcom
               "Albums Costing #{price} Yen"
             end
             albums_by_category
-	  end
+          end
         end
 
         r.is "artists" do
