@@ -1,8 +1,8 @@
 #encoding: utf-8
 
+require_relative 'models'
 require 'roda'
 require 'thamble'
-require_relative 'models'
 
 module Falcom
   class App < Roda
