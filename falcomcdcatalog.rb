@@ -100,7 +100,7 @@ module Falcom
     plugin :request_aref, :raise
 
     logger = case ENV['RACK_ENV']
-    when 'development', 'test' # Remove development after Unicorn 5.5+
+    when 'test'
       Class.new{def write(_) end}.new
     else
       $stderr
