@@ -98,6 +98,7 @@ module Falcom
     alias tp typecast_params
     plugin :disallow_file_uploads
     plugin :request_aref, :raise
+    plugin :hash_routes
 
     logger = case ENV['RACK_ENV']
     when 'test'
@@ -216,20 +217,48 @@ module Falcom
       csp.frame_ancestors :none
     end
 
-    route do |r|
-      r.public
-      r.assets if ADMIN
+    hash_routes :get do
+      view '', 'index'
+      views %w'feedback index news info order'
 
-      r.root do
-        :index
+      [
+        [:@artists, Artist, :artists],
+        [:@games, Game, :games],
+        [:@publishers, Publisher, :publishers],
+        [:@series, Series, :series_list],
+      ].each do |iv, klass, template|
+        is template do |_|
+          instance_variable_set(iv, klass.order(:name).all)
+          template
+        end
       end
 
-      r.get do 
-        r.is %w'feedback index news info order' do |page|
-          page.to_sym
-        end
+      is "photoboard" do |_|
+        @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM().function}
+        :photoboard
+      end
 
-        r.is "album", Integer do |id|
+      [
+        ["album", Album],
+        ["lyric", Lyric],
+        ["song", Song]
+      ].each do |segment, klass|
+        is "random_#{segment}" do |r|
+          r.redirect "/#{segment}/#{(rand(klass.count)+1)}"
+        end
+      end
+      
+      is "song_search_results" do |_|
+        @songs = if songname = tp.nonempty_str('songname')
+          Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
+        else
+          []
+        end
+        :song_search_results
+      end
+          
+      on "album" do |r|
+        r.is Integer do |id|
           @album = Album.with_pk!(id)
           @discs = []
           @albuminfos = {}
@@ -241,157 +270,103 @@ module Falcom
           @media = Medium.filter(:albumid=>id).order(Sequel[:media][:publicationdate]).eager(:mediatype, :publisher).all
           :album
         end
+      end
 
-        r.on 'albums_by_date' do
-          r.is do
-            @pagetitle = 'Albums By Release Date'
-            @albums = Medium.find_albums_by_date(nil)
-            albums_by_category
+      on "albums_by_date" do |r|
+        r.is do
+          @pagetitle = 'Albums By Release Date'
+          @albums = Medium.find_albums_by_date(nil)
+          albums_by_category
+        end
+
+        r.is Integer do |year|
+          @pagetitle = "Albums Released in #{year}"
+          @albums = Medium.find_albums_by_date(year)
+          albums_by_category
+        end
+      end
+
+      on "albums_by_media_type" do |r|
+        r.is do
+          @albums = Medium.find_albums_by_mediatype(nil)
+          @pagetitle = 'Albums By Media Type'
+          albums_by_category
+        end
+
+        r.is Integer  do |mediatype|
+          @albums = Medium.find_albums_by_mediatype(mediatype)
+          @pagetitle = "Albums in #{@albums[0][2]} format"
+          albums_by_category
+        end
+      end
+
+      on "albums_by_name" do |r|
+        r.is do
+          @albums = Album.group_all_by_sortname(nil)
+          @pagetitle = 'Albums By Name'
+          albums_by_category
+        end
+
+        r.is /(\w)/ do |initial|
+          @albums = Album.group_all_by_sortname(initial)
+          @pagetitle = "Albums Starting with #{initial}"
+          albums_by_category
+        end
+      end
+
+      on "albums_by_price" do |r|
+        r.is do
+          @albums = Medium.find_albums_by_price(nil)
+          @pagetitle = 'Albums By Price'
+          albums_by_category
+        end
+
+        r.is Integer do |price|
+          @albums = Medium.find_albums_by_price(price)
+          @pagetitle = if price == 0
+            'Albums Not for Sale'
+          else
+            "Albums Costing #{price} Yen"
           end
+          albums_by_category
+        end
+      end
 
-          r.is Integer do |year|
-            @pagetitle = "Albums Released in #{year}"
-            @albums = Medium.find_albums_by_date(year)
-            albums_by_category
+      [
+        ["artist", :@artist, Artist, :artist],
+        ["game", :@game, Game, :game],
+        ["japanese_lyric", :@lyric, Lyric, :japanese_lyric],
+        ["lyric", :@lyric, Lyric, :lyric],
+        ["publisher", :@publisher, Publisher, :publisher],
+        ["song", :@song, Song, :song]
+      ].each do |branch, iv, klass, template|
+        on branch do |r|
+          r.is Integer do |id|
+            instance_variable_set(iv, klass.with_pk!(id))
+            template
           end
         end
+      end
 
-        r.on 'albums_by_media_type' do
-          r.is do
-            @albums = Medium.find_albums_by_mediatype(nil)
-            @pagetitle = 'Albums By Media Type'
-            albums_by_category
-          end
-
-          r.is Integer  do |mediatype|
-            @albums = Medium.find_albums_by_mediatype(mediatype)
-            @pagetitle = "Albums in #{@albums[0][2]} format"
-            albums_by_category
-          end
-        end
-
-        r.on 'albums_by_name' do
-          r.is do
-            @albums = Album.group_all_by_sortname(nil)
-            @pagetitle = 'Albums By Name'
-            albums_by_category
-          end
-
-          r.is /(\w)/ do |initial|
-            @albums = Album.group_all_by_sortname(initial)
-            @pagetitle = "Albums Starting with #{initial}"
-            albums_by_category
-          end
-        end
-        
-        r.on 'albums_by_price' do
-          r.is do
-            @albums = Medium.find_albums_by_price(nil)
-            @pagetitle = 'Albums By Price'
-            albums_by_category
-          end
-
-          r.is Integer do |price|
-            @albums = Medium.find_albums_by_price(price)
-            @pagetitle = if price == 0
-              'Albums Not for Sale'
-            else
-              "Albums Costing #{price} Yen"
-            end
-            albums_by_category
-          end
-        end
-
-        r.is "artists" do
-          @artists = Artist.order(:name).all
-          :artists
-        end
-        
-        r.is "artist", Integer do |id|
-          @artist = Artist.with_pk!(id)
-          :artist
-        end
-        
-        r.is "game", Integer do |id|
-          @game = Game.with_pk!(id)
-          :game
-        end
-        
-        r.is "games" do
-          @games = Game.order(:name)
-          :games
-        end
-
-        r.is "japanese_lyric", Integer do |id|
-          @lyric = Lyric.with_pk!(id)
-          :japanese_lyric
-        end
-
-        r.is "lyric", Integer do |id|
-          @lyric = Lyric.with_pk!(id)
-          :lyric
-        end
-        
-        r.is "photoboard" do
-          @albums = Album.filter(Sequel.negate([[:picture, nil], [:picture, '']])).order{RANDOM().function}
-          :photoboard
-        end
-
-        r.is "publisher", Integer do |id|
-          @publisher = Publisher.with_pk!(id)
-          :publisher
-        end
-        
-        r.is "publishers" do
-          @publishers = Publisher.order(:name)
-          :publishers
-        end
-        
-        r.is "random_album" do
-          r.redirect "/album/#{(rand(Album.count)+1)}"
-        end
-        
-        r.is "random_lyric" do
-          r.redirect "/lyric/#{(rand(Lyric.count)+1)}"
-        end
-        
-        r.is "random_song" do
-          r.redirect "/song/#{(rand(Song.count)+1)}"
-        end
-       
-        r.is "series", Integer do |id|
+      on "series" do |r|
+        r.is Integer do |id|
           @series = Series.eager_graph(:albums).order(Sequel[:albums][:fullname]).filter(Sequel[:series][:id]=>id).all.first
           @games = Game.eager_graph(:albums).order(Sequel[:games][:name], Sequel[:albums][:fullname]).filter(Sequel[:games][:seriesid]=>id).all
           :series
         end
-        
-        r.is "series_list" do
-          @series = Series.order(:name)
-          :series_list
-        end
-        
-        r.is "song", Integer do |id|
-          @song = Song.with_pk!(id)
-          :song
-        end
-        
-        r.is "song_search_results" do
-          @songs = if songname = tp.nonempty_str('songname')
-            Song.filter(Sequel.ilike(:name, "%#{Song.dataset.escape_like(songname)}%")).order(:name).all
-          else
-            []
-          end
-          :song_search_results
-        end
-        
-        if ADMIN
-          r.is "new_tracklist", Integer do |id|
+      end
+
+      if ADMIN
+        on "new_tracklist" do |r|
+          r.is Integer do |id|
             @album = Album.with_pk!(id)
             r.redirect("/album/#{@album.id}")if @album.tracks.length > 0
             :new_tracklist
           end
-        
-          r.is "new_tracklist_table", Integer do |id|
+        end
+      
+        on "new_tracklist_table" do |r|
+          r.is Integer do |id|
             @album = Album.with_pk!(id)
             @games = Game.order(:name)
             @tracks = @album.tracks_dataset.
@@ -400,24 +375,44 @@ module Falcom
               order(Sequel[:tracks][:discnumber], Sequel[:tracks][:number])
             :new_tracklist_table
           end
+        end
+      end
 
+    end
+
+    if ADMIN
+      hash_routes :post do
+        on "create_tracklist" do |r|
+          r.is Integer do |id|
+            album = Album.with_pk!(id)
+            album.create_tracklist(tp.str!('tracklist'))
+            r.redirect "/album/#{album.id}" 
+          end
+        end
+
+        on "update_tracklist_game" do |r|
+          r.is Integer do |id|
+            Album.with_pk!(id).update_tracklist_game(*tp.pos_int!(%w'disc starttrack endtrack game'))
+            r.redirect "/new_tracklist_table/#{id}"
+          end
+        end
+      end
+    end
+
+    route do |r|
+      r.get do 
+        r.hash_routes(:get)
+        r.public
+
+        if ADMIN
+          r.assets
           autoforme
         end
       end
         
       if ADMIN
         r.post do
-          r.is "create_tracklist", Integer do |id|
-            album = Album.with_pk!(id)
-            album.create_tracklist(tp.str!('tracklist'))
-            r.redirect "/album/#{album.id}" 
-          end
-
-          r.is "update_tracklist_game", Integer do |id|
-            Album.with_pk!(id).update_tracklist_game(*tp.pos_int!(%w'disc starttrack endtrack game'))
-            r.redirect "/new_tracklist_table/#{id}"
-          end
-
+          r.hash_branches(:post)
           autoforme
         end
       end
