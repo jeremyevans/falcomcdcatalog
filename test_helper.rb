@@ -6,7 +6,7 @@ raise "Doesn't look like a test database (database name: #{db_name}), not runnin
 
 ENV['MT_NO_PLUGINS'] = '1' # Work around stupid autoloading of plugins
 gem 'minitest'
-require 'minitest/autorun'
+require 'minitest/global_expectations/autorun'
 require 'minitest/hooks/default'
 FALCOM_CD_CATALOG_TEST_SETUP.call if defined?(FALCOM_CD_CATALOG_TEST_SETUP)
 
