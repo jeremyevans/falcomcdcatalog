@@ -2,8 +2,8 @@ source "https://rubygems.org"
 
 gem 'roda', '>= 3.19'
 gem 'erubi'
-gem 'tilt'
-gem 'sassc'
+gem 'tilt', '>= 2.0.10'
+gem 'sassc', '>= 2'
 gem 'sequel', '>= 5.8'
 gem 'sequel_pg', '>= 1.7'
 gem 'unicorn'
