@@ -288,17 +288,25 @@ describe 'falcomcdcatalog' do
     click_link 'Albums By Name'
     click_link 'Ys OST'
     elements = page.all('#content a').select{|e| e.text == '(Edit)'}
-
-    elements.shift.click
+    elements[0].click
     page.title.must_equal "Falcom CD Catalog - English Edition - Medium - Edit"
 
-    elements.shift.click
+    click_link 'Albums By Name'
+    click_link 'Ys OST'
+    elements = page.all('#content a').select{|e| e.text == '(Edit)'}
+    elements[1].click
     page.title.must_equal "Falcom CD Catalog - English Edition - Medium - Edit"
 
-    elements.shift.click
+    click_link 'Albums By Name'
+    click_link 'Ys OST'
+    elements = page.all('#content a').select{|e| e.text == '(Edit)'}
+    elements[2].click
     page.title.must_equal "Falcom CD Catalog - English Edition - Discname - Edit"
 
-    elements.shift.click
+    click_link 'Albums By Name'
+    click_link 'Ys OST'
+    elements = page.all('#content a').select{|e| e.text == '(Edit)'}
+    elements[3].click
     page.title.must_equal "Falcom CD Catalog - English Edition - Albuminfo - Edit"
 
     click_link 'Albums By Name'
