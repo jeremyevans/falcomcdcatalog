@@ -9,11 +9,11 @@ Gem.suffix_pattern
 
 require_relative 'falcomcdcatalog'
 
-Capybara.app = Falcom::App.app
-
 Falcom::App.not_found{raise "path not found: #{request.path_info}"}
 Falcom::App.error{|e| raise e}
 Falcom::App.freeze
+
+Capybara.app = Falcom::App.app
 
 begin
   require 'refrigerator'
