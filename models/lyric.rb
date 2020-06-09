@@ -20,7 +20,7 @@ class Lyric < Model(:lyricsongs)
   end
   
   def title
-    "#{song.name} (#{song.game.name rescue nil}#{" - #{song.arrangement.name}" if song.arrangementof})"
+    "#{song.name} (#{song.game.name if song.gameid}#{" - #{song.arrangement.name}" if song.arrangementof})"
   end
 end
 end
