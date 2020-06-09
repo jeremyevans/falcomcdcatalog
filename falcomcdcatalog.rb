@@ -3,6 +3,7 @@
 require_relative 'models'
 require 'roda'
 require 'thamble'
+require 'tilt/sass'
 
 module Falcom
   class App < Roda

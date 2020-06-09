@@ -3,6 +3,7 @@
 require 'capybara'
 require 'capybara/dsl'
 require 'rack/test'
+require 'rack/mock'
 
 require_relative 'test_helper'
 Gem.suffix_pattern
