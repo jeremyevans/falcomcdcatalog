@@ -14,7 +14,6 @@ module Falcom
     plugin :direct_call
 
     if ADMIN
-      plugin :strip_path_prefix
       PUBLIC_ROOT = 'public'
     else
       PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
@@ -308,7 +307,7 @@ module Falcom
           albums_by_category
         end
 
-        r.is /(\w)/ do |initial|
+        r.is(/(\w)/) do |initial|
           @albums = Album.group_all_by_sortname(initial)
           @pagetitle = "Albums Starting with #{initial}"
           albums_by_category

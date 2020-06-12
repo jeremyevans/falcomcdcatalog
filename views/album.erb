@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-6 pull-right" id="albuminfo">
-    <%== album_img(@album, ("/images/large/#{@album.picture}" if File.exists?(File.join(PUBLIC_ROOT,'images','large',@album.picture)))) if @album.picture %>
+    <%== album_img(@album, ("/images/large/#{@album.picture}" if File.exist?(File.join(PUBLIC_ROOT,'images','large',@album.picture)))) if @album.picture %>
 
     <h4>Releases</h4>
     <ul>
