@@ -24,7 +24,14 @@ class Medium < Model
   end
 
   def price
-    self[:price] ? "#{self[:price]} Yen" : 'Not for Sale'
+    case pr = self[:price]
+    when nil, 0
+      'Not for Sale'
+    when 1..100
+      "$#{pr}"
+    else
+      "#{pr} Yen"
+    end
   end
   
   def priceid
