@@ -14,7 +14,10 @@ module Falcom
   Model.plugin :forme
   Model.plugin :subclasses
   Model.plugin :pg_auto_constraint_validations
-  Model.plugin :forbid_lazy_load if ENV['RACK_ENV'] == 'test'
+  if ENV['RACK_ENV'] == 'test'
+    Model.plugin :forbid_lazy_load
+    Model.plugin :instance_specific_default, :warn
+  end
 
   ADMIN = ENV['FALCOMCDS_ADMIN']
 end
