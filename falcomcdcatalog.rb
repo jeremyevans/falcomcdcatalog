@@ -377,11 +377,12 @@ module Falcom
         on "new_tracklist_table" do |r|
           r.is Integer do |id|
             @album = Album.with_pk!(id)
-            @games = Game.order(:name)
+            @games = Game.order(:name).all
             @tracks = @album.tracks_dataset.
               select(Sequel[:tracks][:discnumber], Sequel[:tracks][:number], Sequel[:tracks][:songid], Sequel[:song][:name], Sequel[:game][:name].as(:game), Sequel[:arrangement][:name].as(:arrangement)).
               association_left_join(:song=>[:game, :arrangement]).
-              order(Sequel[:tracks][:discnumber], Sequel[:tracks][:number])
+              order(Sequel[:tracks][:discnumber], Sequel[:tracks][:number]).
+              all
             :new_tracklist_table
           end
         end
