@@ -350,8 +350,17 @@ module Falcom
 
       on "series" do |r|
         r.is Integer do |id|
-          @series = Series.eager_graph(:albums).order(Sequel[:albums][:fullname]).filter(Sequel[:series][:id]=>id).all.first
-          @games = Game.eager_graph(:albums).order(Sequel[:games][:name], Sequel[:albums][:fullname]).filter(Sequel[:games][:seriesid]=>id).all
+          @series = Series.
+            eager_graph(:albums).
+            order(Sequel[:albums][:fullname]).
+            filter(Sequel[:series][:id]=>id).
+            all.
+            first
+          @games = Game.
+            eager_graph(:albums).
+            order(Sequel[:games][:name], Sequel[:albums][:fullname]).
+            filter(Sequel[:games][:seriesid]=>id).
+            all
           :series
         end
       end
