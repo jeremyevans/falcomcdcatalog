@@ -1,6 +1,6 @@
 module Falcom
 class Publisher < Model
-  one_to_many :media, :key=>:publisherid, :order=>:publicationdate
+  one_to_many :media, :key=>:publisherid, :order=>:publicationdate, :read_only=>true
   one_to_many :albums, :read_only=>true, :dataset=>proc{Album.eager_graph(:media).filter(Sequel[:media][:publisherid]=>id).order(:sortname)}, :eager_loader=>(proc do |eo|
       h = eo[:id_map]
       records = eo[:rows]

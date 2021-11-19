@@ -1,6 +1,6 @@
 module Falcom
 class Mediatype < Model
-  one_to_many :media, :key=>:mediatypeid, :order=>:publicationdate
+  one_to_many :media, :key=>:mediatypeid, :order=>:publicationdate, :read_only=>true
 end
 end
 

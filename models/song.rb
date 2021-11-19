@@ -1,6 +1,6 @@
 module Falcom
 class Song < Model
-  one_to_many :arrangements, :class=>'Falcom::Song', :key=>:arrangementof
+  one_to_many :arrangements, :class=>'Falcom::Song', :key=>:arrangementof, :read_only=>true
   many_to_one :game, :key=>:gameid
   many_to_one :lyric, :key=>:lyricid
   many_to_one :arrangement, :class=>'Falcom::Song', :key=>:arrangementof

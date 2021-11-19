@@ -2,8 +2,8 @@
 module Falcom
 class Lyric < Model(:lyricsongs)
   one_to_one :song, :key=>:lyricid
-  one_to_many :lyric_verses, :key=>:lyricsongid, :order=>[:languageid, :number]
-  one_to_many :english_verses, :class=>'Falcom::LyricVerse', :key=>:lyricsongid, :order=>:number, :conditions=>{:languageid=>1}
+  one_to_many :lyric_verses, :key=>:lyricsongid, :order=>[:languageid, :number], :read_only=>true
+  one_to_many :english_verses, :class=>'Falcom::LyricVerse', :key=>:lyricsongid, :order=>:number, :conditions=>{:languageid=>1}, :read_only=>true
   one_to_many :romaji_verses, :clone=>:english_verses, :conditions=>{:languageid=>2}
   one_to_many :japanese_verses, :clone=>:english_verses, :conditions=>{:languageid=>3}
   many_to_one :composer, :class=>'Falcom::Artist', :key=>:composer_id

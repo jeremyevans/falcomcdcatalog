@@ -325,4 +325,46 @@ describe 'falcomcdcatalog' do
     click_link 'Add Album Info'
     page.title.must_equal "Falcom CD Catalog - English Edition - Albuminfo - New"
   end
+
+  it "should support management" do
+    click_link 'Manage Album'   
+    select 'Ys OST'
+    click_button 'Edit'
+
+    @album.games_dataset.select_order_map(:id).must_equal [@game.id]
+    page.find('form[data-add="#add_games"] input[type=submit]').click
+    @album.games_dataset.select_order_map(:id).must_equal []
+    select 'Ys II'
+    page.find('form[data-remove="#games_remove_list"] input[type=submit]').click
+    @album.games_dataset.select_order_map(:id).must_equal [@game2.id]
+
+    @album.series_dataset.select_order_map(:id).must_equal []
+    select 'Ys'
+    page.find('form[data-remove="#series_remove_list"] input[type=submit]').click
+    @album.series_dataset.select_order_map(:id).must_equal [@series.id]
+    page.find('form[data-add="#add_series"] input[type=submit]').click
+    @album.series_dataset.select_order_map(:id).must_equal []
+
+    click_link 'Manage Game'   
+    select 'Ys II'
+    click_button 'Edit'
+
+    @game2.albums_dataset.select_order_map(:id).must_equal [@album.id]
+    page.find('form[data-add="#add_albums"] input[type=submit]').click
+    @game2.albums_dataset.select_order_map(:id).must_equal []
+    select 'Ys II OST'
+    page.find('form[data-remove="#albums_remove_list"] input[type=submit]').click
+    @game2.albums_dataset.select_order_map(:id).must_equal [@album2.id]
+
+    click_link 'Manage Series'   
+    select 'Ys'
+    click_button 'Edit'
+
+    @series.albums_dataset.select_order_map(:id).must_equal [@album2.id]
+    page.find('form[data-add="#add_albums"] input[type=submit]').click
+    @series.albums_dataset.select_order_map(:id).must_equal []
+    select 'Ys OST'
+    page.find('form[data-remove="#albums_remove_list"] input[type=submit]').click
+    @series.albums_dataset.select_order_map(:id).must_equal [@album.id]
+  end if ENV['FALCOMCDS_ADMIN']
 end

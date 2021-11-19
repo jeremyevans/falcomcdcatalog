@@ -1,6 +1,6 @@
 module Falcom
 class Artist < Model
-  one_to_many :songs, :order=>Sequel[:songs][:name], :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(:lyricsongs, {:id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]}, :qualify=>:symbol)}, :eager_loader=>(proc do |eo|
+  one_to_many :songs, :read_only=>true, :order=>Sequel[:songs][:name], :dataset=>proc{|r| r.associated_dataset.select_all(:songs).join(:lyricsongs, {:id=>:lyricid, id=>[:composer_id, :arranger_id, :vocalist_id, :lyricist_id]}, :qualify=>:symbol)}, :eager_loader=>(proc do |eo|
       h = eo[:id_map]
       ids = h.keys
       records = eo[:rows]
