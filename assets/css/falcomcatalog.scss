@@ -1,3 +1,5 @@
+* {box-sizing: border-box;}
+
 a {
   &, &:link, &:visited { 
 	 text-decoration: none; 
@@ -40,6 +42,37 @@ input, textarea, select { width: auto; }
   form div input.btn {display: inline; margin: 5px;}
 }
 
+.container {
+  max-width: 1170px;
+  margin: auto;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+
+  .pull-right {
+    order: 100;
+  }
+
+  .col-sm-6 {
+    min-width: 50%;
+  }
+}
+
+ul.nav > li {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.navbar-toggle {
+  display: none;
+}
+
 .navbar-default {
   color: white;
   &, .dropdown-menu, .dropdown-menu li a:hover {
@@ -49,4 +82,112 @@ input, textarea, select { width: auto; }
     &, &:hover, &:visited { color: white; }
     &:hover { text-decoration: underline; }
   }
+  .navbar-header, ul.nav, .navbar-collapse, .navbar-form { display: inline-block;}
+  .navbar-brand {
+    font-size: 24px;
+  }
+  ul.nav {
+    margin: 0;
+    padding: 10px;
+    list-style-type: none;
+    li.dropdown {
+      details { display: inline-block;}
+      details[open] {
+        position: relative;
+        ul.dropdown-menu {
+          list-style-type: none;
+          line-height: 1.5;
+          padding: 10px;
+          margin: 0;
+          position: absolute;
+          display: table;
+          top: 1.5em;
+          white-space: nowrap;
+          a { color: white;}
+        }
+      }
+    }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media only screen and (max-width: 1000px) {
+  .navbar-default {
+    .navbar-header {
+      width: 100%;
+      padding: 10px;
+      margin: 0;
+    }
+    .navbar-form { display: none;}
+
+    .navbar-toggle {
+      display: inline-block;
+      position: relative;
+      float: right;
+      padding: 6px;
+      margin-bottom: 6px;
+      background-color: transparent;
+      border-radius: 3px;
+      background-image: none;
+      border: 1px solid #ddd;
+
+      .icon-bar {
+        display: block;
+        width: 18px;
+        height: 2px;
+        border-radius: 1px;
+        background-color: #888;
+        & + .icon-bar {
+          margin-top: 3px;
+        }
+      }
+    }
+
+    .navbar-collapse { display: none; }
+    .navbar-collapse.display, ul.nav {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    ul.nav > li.dropdown {
+      margin: 0;
+      padding: 0;
+      display: block;
+      width: 100%;
+      details {
+        width: 100%;
+        display: block;
+        border-bottom: 1px solid #555;
+      }
+      summary {
+        display: block;
+        text-align: center;
+        line-height: 1.5;
+      }
+      details[open] {
+        position: static;
+        ul.dropdown-menu {
+          width: 100%;
+          position: static;
+          min-width: auto;
+          li {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  .row .pull-right { order: 0; }
 }
