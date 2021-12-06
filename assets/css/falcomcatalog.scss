@@ -39,7 +39,7 @@ label {
 input, textarea, select { width: auto; }
 
 .inline_mtm_add_associations, .inline_mtm_remove_associations {
-  form div input.btn {display: inline; margin: 5px;}
+  .mtm_remove_associations div, .mtm_remove_associations, .mtm_add_associations div, form div input.btn {display: inline; margin: 5px;}
 }
 
 .container {

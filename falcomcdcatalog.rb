@@ -15,6 +15,7 @@ module Falcom
 
     if ADMIN
       PUBLIC_ROOT = 'public'
+      plugin :route_csrf
     else
       PUBLIC_ROOT = File.join(File.dirname(__FILE__), 'public')
     end
@@ -82,8 +83,8 @@ module Falcom
     plugin :public, :gzip=>true
     plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
     plugin :assets,
-      :css=>{:public=>%w'falcomcatalog.scss', :admin=>'jquery.autocomplete.css'},
-      :js=>{:public=>%w'app.js', :admin=>%w'jquery-1.11.1.min.js jquery.autocomplete.js autoforme.js'},
+      :css=>{:public=>%w'falcomcatalog.scss', :admin=>'auto-complete.css'},
+      :js=>{:public=>%w'app.js', :admin=>%w'auto-complete.min.js autoforme.js'},
       :css_opts=>{:style=>:compressed, :cache=>false},
       :compiled_path=>nil,
       :group_subdirs=>false,
