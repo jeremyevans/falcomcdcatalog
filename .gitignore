@@ -3,3 +3,4 @@
 /compiled_assets.json
 /public/javascripts
 /public/stylesheets/*.css
+/public/stylesheets/*.css.gz
