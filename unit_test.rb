@@ -77,7 +77,7 @@ describe Album do
     s1 = Song.create(:name=>'Track1')
     s2 = Song.create(:name=>'Track2')
     @album.create_tracklist("Track1\nTrack2")
-    songs = Song.order(:name).all.must_equal [s1, s2]
+    Song.order(:name).all.must_equal [s1, s2]
     @album.refresh.tracks.must_equal [Track.load(:discnumber=>1, :number=>1, :songid=>s1.id), Track.load(:discnumber=>1, :number=>2, :songid=>s2.id)]
   end
 
@@ -157,7 +157,7 @@ describe Artist do
 
   specify "associations should be correct" do
     lyric1 = Lyric.create
-    song1 = Song.create(:lyricid=>lyric1.id)
+    Song.create(:lyricid=>lyric1.id)
     lyric2 = Lyric.create(:composer_id=>@artist.id)
     song2 = Song.create(:name=>'Z', :lyricid=>lyric2.id)
     lyric3 = Lyric.create(:lyricist_id=>@artist.id)

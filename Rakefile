@@ -1,9 +1,11 @@
 require_relative '.rake_tasks' if File.file?('./.rake_tasks.rb')
 
+test_flags = '-w' if RUBY_VERSION >= '3'
+
 desc "Run specs"
 task :spec do
-  sh %{#{FileUtils::RUBY} unit_test.rb}
-  sh %{#{FileUtils::RUBY} test.rb}
+  sh "#{FileUtils::RUBY} #{test_flags} unit_test.rb"
+  sh "#{FileUtils::RUBY} #{test_flags} test.rb"
 end
 
 desc "Find unused associations and association methods"

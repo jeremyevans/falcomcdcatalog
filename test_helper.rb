@@ -1,17 +1,5 @@
 ENV['RACK_ENV'] = 'test'
 
-begin
-  require 'warning'
-rescue LoadError
-else
-  $VERBOSE = true
-  Warning.ignore(/warning: setting Encoding\.default_/, File.dirname(__dir__))
-  Warning.ignore([:missing_ivar, :method_redefined], File.dirname(__dir__))
-  Gem.path.each do |path|
-    Warning.ignore([:missing_ivar, :method_redefined, :not_reached], path)
-  end
-end
-
 require_relative 'models'
 
 db_name = Falcom::DB.get{current_database.function} 
