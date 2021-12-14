@@ -15,6 +15,7 @@ Falcom::App.error{|e| raise e}
 Falcom::App.freeze
 
 Capybara.app = Falcom::App.app
+Capybara.ignore_hidden_elements = false
 
 begin
   require 'refrigerator'
