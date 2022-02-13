@@ -35,6 +35,15 @@ label {
   margin-right: 5px;
   min-width: 120px;
 }
+#tracklist-table {
+  label {
+    min-width: auto;
+    margin-right: 0;
+  }
+  input {
+    margin-right: 15px;
+  }
+}
 
 input, textarea, select { width: auto; }
 

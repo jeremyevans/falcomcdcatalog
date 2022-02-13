@@ -15,6 +15,7 @@ Falcom::App.error{|e| raise e}
 Falcom::App.freeze
 
 Capybara.app = Falcom::App.app
+Capybara.exact = true
 Capybara.ignore_hidden_elements = false
 
 begin
@@ -155,7 +156,7 @@ describe 'falcomcdcatalog' do
     page.all('#content li a').map(&:text).must_equal ["Ys OST"]
 
     click_link 'Ys OST'
-    click_link '1000'
+    click_link '1000 Yen'
     page.title.must_equal 'Falcom CD Catalog - English Edition - Albums Costing 1000 Yen'
     page.all('#content li').map(&:text).must_equal ["Ys OST"]
     page.all('#content li a').map(&:text).must_equal ["Ys OST"]
