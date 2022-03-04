@@ -1,6 +1,5 @@
 <% @pagetitle = @lyric.title %> 
 <%== "<br /><i>#{@lyric.rsongname}</i>" if @lyric.rsongname != @lyric.song.name %>
-</h1>
 
 <p>
 <%== "Music: #{link_to(@lyric.composer.name, '/artist/%s' % @lyric.composer.id)}<br />" if @lyric.composer %>
