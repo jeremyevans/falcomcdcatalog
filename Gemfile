@@ -11,6 +11,7 @@ gem 'thamble'
 
 group :development, :test do
   gem "capybara", '>= 1.1.2'
+  gem "capybara-validate_html5"
   gem "minitest", '>= 5'
   gem "minitest-hooks", '>= 1.4'
   gem "minitest-global_expectations"

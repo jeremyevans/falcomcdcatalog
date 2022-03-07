@@ -2,6 +2,7 @@
 
 require 'capybara'
 require 'capybara/dsl'
+require 'capybara/validate_html5'
 require 'rack/test'
 require 'rack/mock'
 
@@ -84,10 +85,12 @@ describe 'falcomcdcatalog' do
     page.title.must_equal 'Falcom CD Catalog - English Edition - How to Order Albums from Falcom'
 
     visit '/'
-    click_link 'Old Site (2003-2005)'
-    page.body.must_include 'If you are still interested in the old site, you can find it archived'
-    click_link 'here'
-    page.title.must_equal 'Falcom Discography - English Edition'
+    skip_html_validation do
+      click_link 'Old Site (2003-2005)'
+      page.body.must_include 'If you are still interested in the old site, you can find it archived'
+      click_link 'here'
+      page.title.must_equal 'Falcom Discography - English Edition'
+    end
   end
 
   it "should provide album pages" do
