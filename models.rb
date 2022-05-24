@@ -14,6 +14,7 @@ module Falcom
   Model.plugin :forme
   Model.plugin :subclasses
   Model.plugin :pg_auto_constraint_validations
+  Model.plugin :auto_restrict_eager_graph
   if ENV['UNUSED_ASSOCIATION_COVERAGE']
     Model.plugin :unused_associations, :coverage_file=>'unused_associations_coverage.json', :file=>'unused_associations.json'
   end
