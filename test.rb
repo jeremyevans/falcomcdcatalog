@@ -2,7 +2,7 @@
 
 require 'capybara'
 require 'capybara/dsl'
-require 'capybara/validate_html5'
+require 'capybara/optionally_validate_html5'
 require 'rack/test'
 require 'rack/mock'
 
