@@ -90,6 +90,8 @@ module Falcom
       :group_subdirs=>false,
       :compiled_css_dir=>'stylesheets',
       :compiled_js_dir=>'javascripts',
+      :css_compressor=>:none,
+      :js_compressor=>:none,
       :precompiled=>File.expand_path('../compiled_assets.json', __FILE__),
       :prefix=>nil,
       :gzip=>true
