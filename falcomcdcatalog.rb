@@ -81,7 +81,7 @@ module Falcom
     end
 
     plugin :public, :gzip=>true
-    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true
+    plugin :render, :cache=>!ADMIN, :default_encoding => 'UTF-8', :escape=>true, :template_opts=>{:chain_appends=>true}
     plugin :assets,
       :css=>{:public=>%w'falcomcatalog.scss', :admin=>'auto-complete.css'},
       :js=>{:public=>%w'app.js', :admin=>%w'auto-complete.min.js autoforme.js'},
