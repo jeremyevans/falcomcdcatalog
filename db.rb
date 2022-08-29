@@ -10,7 +10,7 @@ module Falcom
   url = if ENV['RACK_ENV'] == 'test'
     ENV.delete('FALCOMCDS_TEST_DATABASE_URL')
   else
-    ENV.delete('FALCOMCDS_DATABASE_URL') || ENV.delete('DATABASE_URL')
+    ENV.delete('FALCOMCDCATALOG_DATABASE_URL') || ENV.delete('FALCOMCDS_DATABASE_URL') || ENV.delete('DATABASE_URL')
   end
 
   DB = Sequel.connect(url)
