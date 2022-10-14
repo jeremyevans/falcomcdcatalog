@@ -16,4 +16,5 @@ module Falcom
   DB = Sequel.connect(url)
   Sequel.extension :blank, :pg_array, :pg_row, :pg_array_ops, :pg_row_ops
   DB.extension :pg_array, :pg_row
+  DB.extension :pg_auto_parameterize
 end
