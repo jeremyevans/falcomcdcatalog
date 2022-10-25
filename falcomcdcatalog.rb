@@ -97,7 +97,8 @@ module Falcom
       :gzip=>true
     plugin :h
     plugin :symbol_views
-    plugin :typecast_params
+    plugin :Integer_matcher_max
+    plugin :typecast_params_sized_integers, :sizes=>[64], :default_size=>64
     alias tp typecast_params
     plugin :disallow_file_uploads
     plugin :request_aref, :raise
