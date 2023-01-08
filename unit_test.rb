@@ -1,6 +1,8 @@
 require_relative 'test_helper'
 
 include Falcom
+Model.freeze_descendents
+DB.freeze
 
 describe Album do
   before do

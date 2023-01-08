@@ -13,9 +13,8 @@ require_relative 'falcomcdcatalog'
 
 Falcom::App.not_found{raise "path not found: #{request.path_info}"}
 Falcom::App.error{|e| raise e}
-Falcom::App.freeze
 
-Capybara.app = Falcom::App.app
+Capybara.app = Falcom::App.freeze.app
 Capybara.exact = true
 Capybara.ignore_hidden_elements = false
 

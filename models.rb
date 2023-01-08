@@ -28,5 +28,3 @@ module Falcom
 end
 
 %w'track album albuminfo artist discname game lyric lyric_verse mediatype medium publisher series song'.each{|x| require_relative "models/#{x}"}
-Falcom::Model.freeze_descendents
-Falcom::DB.freeze
