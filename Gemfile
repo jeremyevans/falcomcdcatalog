@@ -5,7 +5,7 @@ gem 'erubi', '>= 1.11.0'
 gem 'tilt', '>= 2.2.0'
 gem 'sassc', '>= 2'
 gem 'sequel', '>= 5.62'
-gem 'sequel_pg', '>= 1.7'
+gem 'sequel_pg', '>= 1.7', require: nil
 gem 'unicorn'
 gem 'thamble'
 
