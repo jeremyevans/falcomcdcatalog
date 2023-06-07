@@ -10,6 +10,7 @@ require_relative 'test_helper'
 Gem.suffix_pattern
 
 require_relative 'falcomcdcatalog'
+Tilt.finalize!
 
 Falcom::App.not_found{raise "path not found: #{request.path_info}"}
 Falcom::App.error{|e| raise e}
