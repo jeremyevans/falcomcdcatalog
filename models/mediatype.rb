@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Mediatype < Model
   one_to_many :media, :key=>:mediatypeid, :order=>:publicationdate, :read_only=>true

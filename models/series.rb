@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Series < Model
   many_to_many :albums, :left_key=>:seriesid, :join_table=>:seriesalbums, :right_key=>:albumid, :order=>:sortname, :clearer=>nil

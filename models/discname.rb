@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Discname < Model
   many_to_one :album, :key => :albumid

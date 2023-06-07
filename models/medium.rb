@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Medium < Model
   many_to_one :album, :key => :albumid

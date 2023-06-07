@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Track < Model(:track)
   plugin :pg_row

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Song < Model
   one_to_many :arrangements, :class=>'Falcom::Song', :key=>:arrangementof, :read_only=>true

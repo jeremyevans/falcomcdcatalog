@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Publisher < Model
   one_to_many :media, :key=>:publisherid, :order=>:publicationdate, :read_only=>true

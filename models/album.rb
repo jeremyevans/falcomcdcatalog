@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Falcom
 class Album < Model
   one_to_many :discnames, :key=>:albumid, :order=>:number, :read_only=>true
