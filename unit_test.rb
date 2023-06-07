@@ -5,6 +5,13 @@ include Falcom
 Model.freeze_descendents
 DB.freeze
 
+begin
+  require 'refrigerator'
+rescue LoadError
+else
+  Refrigerator.freeze_core
+end
+
 describe Album do
   before do
     @album = Album.create(:fullname=>'A TestAlbum', :sortname=>'TestAlbum')
