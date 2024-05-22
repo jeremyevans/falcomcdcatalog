@@ -4,6 +4,7 @@ run Falcom::App.freeze.app
 
 require 'tilt/sass' unless File.exist?(File.expand_path('../compiled_assets.json', __FILE__))
 Tilt.finalize!
+RubyVM::YJIT.enable if defined?(RubyVM::YJIT.enable)
 
 begin
   require 'refrigerator'
