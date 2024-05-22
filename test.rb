@@ -275,7 +275,7 @@ describe 'falcomcdcatalog' do
     page.all('.lyric-romaji').map(&:text).must_equal ["It Hurts", "It Does"]
 
     click_link 'Japanese Lyrics'
-    page.title.force_encoding('BINARY').must_equal "Falcom CD Catalog - English Edition - Endless HistoryJ \xEF\xBC\x88Ys IJ\xE3\x80\x8CToo Full With LoveJ\xE3\x80\x8D\xEF\xBC\x89".force_encoding('BINARY')
+    page.title.dup.force_encoding('BINARY').must_equal "Falcom CD Catalog - English Edition - Endless HistoryJ \xEF\xBC\x88Ys IJ\xE3\x80\x8CToo Full With LoveJ\xE3\x80\x8D\xEF\xBC\x89".force_encoding('BINARY')
     page.first('#content p').text.must_equal 'Music: TK Arrangement: TK Lyric: TK Vocal: TK'
     page.all('.lyric-verse').map(&:text).must_equal ["Over Soon", "I hope"]
   end
