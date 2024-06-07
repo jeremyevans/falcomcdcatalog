@@ -8,6 +8,7 @@ gem 'sequel', '>= 5.62'
 gem 'sequel_pg', '>= 1.7', require: nil
 gem 'unicorn'
 gem 'thamble'
+gem 'logger'
 
 group :development, :test do
   gem "capybara", '>= 1.1.2'
