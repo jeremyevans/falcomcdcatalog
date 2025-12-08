@@ -18,4 +18,6 @@ module Falcom
   Sequel.extension :blank, :pg_array, :pg_row, :pg_array_ops, :pg_row_ops
   DB.extension :pg_array, :pg_row
   DB.extension :pg_auto_parameterize
+  DB.opts[:treat_string_list_as_untyped_array] = true
+  DB.extension :pg_auto_parameterize_in_array
 end
