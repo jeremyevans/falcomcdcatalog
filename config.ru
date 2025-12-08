@@ -6,9 +6,13 @@ require 'tilt/sass' unless File.exist?(File.expand_path('../compiled_assets.json
 Tilt.finalize!
 RubyVM::YJIT.enable if defined?(RubyVM::YJIT.enable)
 
+FALCOM_CD_CATALOG_CONFIG_RU_BEFORE_FREEZE.call if defined?(FALCOM_CD_CATALOG_CONFIG_RU_BEFORE_FREEZE)
+
 begin
   require 'refrigerator'
 rescue LoadError
 else
   Refrigerator.freeze_core
 end
+
+FALCOM_CD_CATALOG_CONFIG_RU.call if defined?(FALCOM_CD_CATALOG_CONFIG_RU)
